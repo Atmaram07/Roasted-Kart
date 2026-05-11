@@ -1,4 +1,5 @@
-﻿import { NavLink, Outlet } from "react-router-dom";
+﻿import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import { storeLinks } from "../data/catalog";
 import { useCart } from "../context/CartContext";
 
@@ -12,6 +13,7 @@ const navItems = [
 
 export default function SiteLayout() {
   const { count } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#fff8ef] text-[#202020]">
@@ -25,7 +27,19 @@ export default function SiteLayout() {
             <span className="text-[#ff7a00]">Roasted</span>Kart
           </NavLink>
 
-          <div className="flex items-center gap-3 text-sm font-black uppercase md:gap-6">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            aria-expanded={mobileMenuOpen}
+            aria-label="Toggle navigation menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#0000001f] bg-white text-[#2b2b2b] md:hidden"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+
+          <div className="hidden items-center gap-3 text-sm font-black uppercase md:flex md:gap-6">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -43,6 +57,40 @@ export default function SiteLayout() {
               Amazon
             </a>
             <a href={storeLinks.flipkart} target="_blank" rel="noopener noreferrer" className="rounded-full border border-[#0000001f] bg-white px-3 py-2 text-[11px] tracking-wide text-[#2b2b2b]">
+              Flipkart
+            </a>
+          </div>
+        </div>
+
+        <div className={`${mobileMenuOpen ? "block" : "hidden"} border-t border-[#00000012] bg-[#fff8ef] px-4 pb-4 pt-2 md:hidden`}>
+          <div className="flex flex-col gap-2">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `block rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.08em] transition ${isActive ? "bg-[#ff6b00] text-white" : "bg-white text-[#2b2b2b] hover:bg-[#fff0e4]"}`
+                }
+              >
+                {item.label}
+                {item.to === "/cart" ? ` (${count})` : ""}
+              </NavLink>
+            ))}
+            <a
+              href={storeLinks.amazon}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-2xl bg-[#ff6b00] px-4 py-3 text-center text-[11px] font-black uppercase tracking-wide text-white"
+            >
+              Amazon
+            </a>
+            <a
+              href={storeLinks.flipkart}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-2xl border border-[#0000001f] bg-white px-4 py-3 text-center text-[11px] font-black uppercase tracking-wide text-[#2b2b2b]"
+            >
               Flipkart
             </a>
           </div>

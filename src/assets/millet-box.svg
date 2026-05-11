@@ -1,0 +1,16 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="milletTitle milletDesc">
+  <title id="milletTitle">The Great Indian Millet Box</title>
+  <desc id="milletDesc">Stylized millet snack box packaging illustration.</desc>
+  <rect width="600" height="600" rx="80" fill="#fde7c7" />
+  <rect x="80" y="120" width="440" height="300" rx="40" fill="#ffffff" stroke="#d1a463" stroke-width="12" />
+  <path d="M100 120 H500 L430 50 H170 Z" fill="#d98a2f" />
+  <rect x="200" y="160" width="200" height="40" rx="20" fill="#6abf69" />
+  <text x="300" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-size="28" font-weight="800" fill="#ffffff">MILLET</text>
+  <text x="300" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#4f3f1b">BOX</text>
+  <circle cx="150" cy="420" r="50" fill="#f7b500" />
+  <circle cx="220" cy="480" r="40" fill="#f3d08a" />
+  <circle cx="310" cy="420" r="45" fill="#f7b500" />
+  <circle cx="390" cy="470" r="38" fill="#f3d08a" />
+  <circle cx="470" cy="420" r="45" fill="#f7b500" />
+  <text x="300" y="540" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#6a3a00">Pack of 4 Mixes</text>
+</svg>

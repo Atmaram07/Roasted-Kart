@@ -34,7 +34,7 @@ export default function ProductPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div className={`rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px] shadow-[0_24px_50px_rgba(9,4,25,0.45)]`}>
             <div className="h-full rounded-3xl bg-white p-8">
-              <div className="h-80 rounded-2xl bg-gradient-to-br from-white/20 to-transparent" />
+              <img src={product.image} alt={product.name} className="h-80 w-full rounded-2xl object-contain" />
               <div className="mt-6 rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#555]">
                 Packaging-first product visual placeholder. Add packshot image here.
               </div>

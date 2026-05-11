@@ -1,0 +1,15 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="proteinTitle proteinDesc">
+  <title id="proteinTitle">The Great Indian Protein Box</title>
+  <desc id="proteinDesc">Stylized soya protein pops box packaging illustration.</desc>
+  <rect width="600" height="600" rx="80" fill="#fff5ea" />
+  <rect x="80" y="120" width="440" height="300" rx="40" fill="#111827" stroke="#f97316" stroke-width="12" />
+  <path d="M100 120 H500 L430 50 H170 Z" fill="#fb923c" />
+  <text x="300" y="185" text-anchor="middle" font-family="Inter, sans-serif" font-size="28" font-weight="800" fill="#ffffff">PROTEIN</text>
+  <text x="300" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#fbbf24">BOX</text>
+  <circle cx="160" cy="430" r="46" fill="#fbbf24" />
+  <circle cx="240" cy="470" r="42" fill="#f97316" />
+  <circle cx="320" cy="430" r="48" fill="#fbbf24" />
+  <circle cx="410" cy="470" r="40" fill="#f97316" />
+  <circle cx="430" cy="390" r="28" fill="#fde68a" />
+  <text x="300" y="540" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#111827">Pack Of 3 Pops</text>
+</svg>

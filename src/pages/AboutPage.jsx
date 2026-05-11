@@ -17,7 +17,7 @@ const values = [
 
 const journey = [
   { year: "2024", event: "Kitchen Trials", detail: "Hundreds of roast and seasoning experiments." },
-  { year: "2025", event: "Flavor Lab", detail: "Built 3 product lines and 8 playful variants." },
+  { year: "2025", event: "Flavor Lab", detail: "Built 3 product lines and one trail box with 8 flavours." },
   { year: "2026", event: "Nationwide Launch", detail: "Marketplace-first scale with community traction." },
 ];
 

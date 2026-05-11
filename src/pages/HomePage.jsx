@@ -3,7 +3,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { flattenedVariants, products, storeLinks } from "../data/catalog";
+import { products, storeLinks } from "../data/catalog";
+import soyaPopsGraphic from "../assets/soya-pops.svg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,7 +69,7 @@ export default function HomePage() {
               Not Boring.
             </h1>
             <p className="rk-hero-reveal mt-4 max-w-xl text-base text-[#4b4b4b] md:text-xl">
-              Crunch that hits different. Healthy snacks that party hard on flavor without boring health-brand energy.
+              Three curated snack boxes, one clean brand. Crunch that hits different without boring health-brand energy.
             </p>
 
             <div className="rk-hero-reveal mt-7 flex flex-wrap gap-2">
@@ -88,38 +89,31 @@ export default function HomePage() {
           </div>
 
           <motion.div className="relative" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <motion.div className="absolute -left-6 top-8 rounded-full bg-[#ff7a00] px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white" animate={{ rotate: [0, -6, 0] }} transition={{ duration: 3, repeat: Infinity }}>
-              Hero SKU
-            </motion.div>
-            <motion.div className="absolute -right-8 bottom-8 rounded-full bg-[#d5ff4f] px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-[#1b2a00]" animate={{ rotate: [0, 5, 0] }} transition={{ duration: 3.5, repeat: Infinity }}>
-              Snack Smart
+            <motion.div
+              className="mb-6 overflow-hidden rounded-[2rem] border border-[#00000014] bg-white shadow-[0_24px_50px_rgba(255,107,0,0.18)]"
+              initial={{ scale: 0.98 }}
+              animate={{ scale: [0.98, 1, 0.98] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <motion.img
+                src={soyaPopsGraphic}
+                alt="Healthy soya pops snack graphic"
+                className="w-full max-w-full object-cover"
+                initial={{ y: 0, rotate: 0 }}
+                animate={{ y: [0, -14, 0], rotate: [0, 2, 0, -2, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-[#ff7a00] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white shadow-lg shadow-[#ff7a0014]">
+                Healthy Soya Pops
+              </div>
             </motion.div>
 
-            <motion.div key={current.id} initial={{ opacity: 0.2, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="rotate-[-3deg] rounded-[2rem] border border-[#00000014] bg-white p-6 shadow-[0_24px_50px_rgba(255,107,0,0.18)]">
-              <div className="rotate-[3deg] rounded-[1.5rem] bg-gradient-to-br from-[#ff8a00] to-[#ff4d00] p-[1px]">
-                <div className="rounded-[1.5rem] bg-[#fff8ef] p-6">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ff6b00]">{heroProduct.name}</p>
-                  <h3 className="mt-2 text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{current.name}</h3>
-                  <p className="mt-1 text-sm text-[#666]">{current.weight}</p>
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-white p-3 shadow-sm">
-                      <p className="text-[11px] font-black uppercase tracking-wide text-[#777]">Protein</p>
-                      <p className="text-lg font-black text-[#ff6b00]">{current.protein}</p>
-                    </div>
-                    <div className="rounded-xl bg-white p-3 shadow-sm">
-                      <p className="text-[11px] font-black uppercase tracking-wide text-[#777]">Calories</p>
-                      <p className="text-lg font-black text-[#ff6b00]">{current.calories}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    {heroProduct.variants.map((variant, idx) => (
-                      <button key={variant.id} onClick={() => setActiveVariant(idx)} className={`rounded-lg px-2 py-2 text-[10px] font-black uppercase tracking-wide ${activeVariant === idx ? "bg-[#ff7a00] text-white" : "bg-[#fff0e4] text-[#8b4b00]"}`}>
-                        {variant.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <motion.div
+              className="absolute -right-6 top-10 flex h-20 w-20 items-center justify-center rounded-full bg-[#d5ff4f] text-center text-xs font-black uppercase tracking-[0.08em] text-[#1b2a00] shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
+              animate={{ x: [0, -10, 0], y: [0, -8, 0] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              Soya Pop
             </motion.div>
           </motion.div>
         </div>
@@ -140,12 +134,13 @@ export default function HomePage() {
 
       <section className="rk-reveal bg-[#fff8ef] px-4 py-14 md:px-8">
         <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Snack Categories</h2>
+          <h2 className="text-center text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Our Boxes</h2>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {products.map((product, idx) => (
               <motion.article key={product.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -1 : 1 }} className={`rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px]`}>
                 <div className="h-full rounded-3xl bg-white p-6">
-                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#8b4b00]">{product.category}</p>
+                  <img src={product.image} alt={product.name} className="mx-auto h-36 w-full max-w-[260px] object-contain" />
+                  <p className="mt-4 text-xs font-black uppercase tracking-[0.14em] text-[#8b4b00]">{product.category}</p>
                   <h3 className="mt-3 text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
                   <p className="mt-3 text-sm text-[#555]">{product.shortDescription}</p>
                   <Link to="/shop" className="mt-5 inline-block rounded-full bg-[#1f1f1f] px-5 py-2 text-xs font-black uppercase tracking-wide text-[#ffd26f]">Explore</Link>
@@ -176,21 +171,25 @@ export default function HomePage() {
             <Link to="/shop" className="text-sm font-black uppercase text-[#ff6b00]">See all</Link>
           </div>
           <div className="no-scrollbar flex gap-4 overflow-x-auto pb-2">
-            {flattenedVariants.map((variant, idx) => (
-              <motion.article key={variant.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -0.6 : 0.6 }} className="min-w-[290px] rounded-2xl border border-[#00000012] bg-[#fffaf4] p-5">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff6b00]">{variant.productCategory}</p>
-                <h3 className="mt-2 text-2xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{variant.name}</h3>
-                <div className="mt-4 flex gap-2 text-[10px] font-black uppercase">
-                  {variant.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="rounded-full bg-[#fff0e4] px-3 py-1 text-[#8b4b00]">{tag}</span>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <p className="text-xl font-black text-[#ff6b00]">Rs {variant.price}</p>
-                  <Link to={`/product/${variant.slug}`} className="rounded-full bg-[#ff7a00] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-white">View</Link>
-                </div>
-              </motion.article>
-            ))}
+            {products.map((product, idx) => {
+              const variant = product.variants[0];
+              return (
+                <motion.article key={product.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -0.6 : 0.6 }} className="min-w-[290px] rounded-2xl border border-[#00000012] bg-[#fffaf4] p-5">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff6b00]">{product.category}</p>
+                  <h3 className="mt-2 text-2xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
+                  <p className="mt-3 text-sm text-[#555]">{product.shortDescription}</p>
+                  <div className="mt-4 flex gap-2 text-[10px] font-black uppercase">
+                    {variant.tags.slice(0, 2).map((tag) => (
+                      <span key={tag} className="rounded-full bg-[#fff0e4] px-3 py-1 text-[#8b4b00]">{tag}</span>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex items-center justify-between">
+                    <p className="text-xl font-black text-[#ff6b00]">Rs {variant.price}</p>
+                    <Link to={`/product/${variant.slug}`} className="rounded-full bg-[#ff7a00] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-white">View</Link>
+                  </div>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </section>

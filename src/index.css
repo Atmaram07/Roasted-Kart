@@ -5,6 +5,7 @@
 
 * {
   box-sizing: border-box;
+  min-width: 0;
 }
 
 html,
@@ -12,6 +13,7 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -72,5 +74,26 @@ a {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+@media (max-width: 640px) {
+  .rk-soft-blob-a {
+    left: -45px;
+    top: -20px;
+    width: 200px;
+    height: 200px;
+  }
+
+  .rk-soft-blob-b {
+    right: -30px;
+    bottom: 10px;
+    width: 180px;
+    height: 180px;
   }
 }
