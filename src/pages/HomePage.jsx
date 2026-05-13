@@ -1,15 +1,15 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { products, storeLinks } from "../data/catalog";
-import soyaPopsGraphic from "../assets/soya-pops.svg";
+import soyaPopsGraphic from "../assets/soya-pops.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const benefits = ["ROASTED NOT FRIED", "NO PALM OIL", "NO MAIDA", "NO ARTIFICIAL FLAVOURS"];
-const partners = ["Blinkit", "Zepto", "Amazon", "Flipkart"];
+const partners = ["Amazon", "Flipkart"];
 const press = ["Buzzfeed", "YourStory", "Economic Times", "FoodTech India"];
 const reviews = [
   "Finished 3 packs. No regrets.",
@@ -139,7 +139,7 @@ export default function HomePage() {
             {products.map((product, idx) => (
               <motion.article key={product.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -1 : 1 }} className={`rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px]`}>
                 <div className="h-full rounded-3xl bg-white p-6">
-                  <img src={product.image} alt={product.name} className="mx-auto h-36 w-full max-w-[260px] object-contain" />
+                  <img src={product.image} alt={product.name} className="mx-auto h-56 w-full max-w-[320px] object-contain" />
                   <p className="mt-4 text-xs font-black uppercase tracking-[0.14em] text-[#8b4b00]">{product.category}</p>
                   <h3 className="mt-3 text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
                   <p className="mt-3 text-sm text-[#555]">{product.shortDescription}</p>
@@ -170,22 +170,41 @@ export default function HomePage() {
             <h2 className="text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Hot Sellers</h2>
             <Link to="/shop" className="text-sm font-black uppercase text-[#ff6b00]">See all</Link>
           </div>
-          <div className="no-scrollbar flex gap-4 overflow-x-auto pb-2">
+          <div className="no-scrollbar flex gap-5 overflow-x-auto pb-2">
             {products.map((product, idx) => {
               const variant = product.variants[0];
               return (
-                <motion.article key={product.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -0.6 : 0.6 }} className="min-w-[290px] rounded-2xl border border-[#00000012] bg-[#fffaf4] p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff6b00]">{product.category}</p>
-                  <h3 className="mt-2 text-2xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
-                  <p className="mt-3 text-sm text-[#555]">{product.shortDescription}</p>
-                  <div className="mt-4 flex gap-2 text-[10px] font-black uppercase">
-                    {variant.tags.slice(0, 2).map((tag) => (
-                      <span key={tag} className="rounded-full bg-[#fff0e4] px-3 py-1 text-[#8b4b00]">{tag}</span>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-xl font-black text-[#ff6b00]">Rs {variant.price}</p>
-                    <Link to={`/product/${variant.slug}`} className="rounded-full bg-[#ff7a00] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-white">View</Link>
+                <motion.article
+                  key={product.id}
+                  whileHover={{ y: -6, rotate: idx % 2 === 0 ? -0.6 : 0.6 }}
+                  className={`min-w-[320px] rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px] shadow-[0_14px_30px_rgba(0,0,0,0.08)]`}
+                >
+                  <div className="h-full rounded-3xl bg-[#fffaf4] p-5">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-44 w-full rounded-2xl object-contain"
+                    />
+                    <p className="mt-4 text-[11px] font-black uppercase tracking-[0.14em] text-[#ff6b00]">{product.category}</p>
+                    <h3 className="mt-1 text-xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
+                    <p className="mt-2 text-sm text-[#555]">{product.shortDescription}</p>
+                    <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black uppercase">
+                      {variant.tags.slice(0, 2).map((tag) => (
+                        <span key={tag} className="rounded-full bg-[#fff0e4] px-3 py-1 text-[#8b4b00]">{tag}</span>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-xl font-black text-[#ff6b00]">Rs {variant.price}</p>
+                        <p className="text-xs text-[#aaa] line-through">Rs {variant.mrp}</p>
+                      </div>
+                      <Link
+                        to={`/product/${variant.slug}`}
+                        className="rounded-full bg-[#1f1f1f] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-[#ffd26f]"
+                      >
+                        View Details
+                      </Link>
+                    </div>
                   </div>
                 </motion.article>
               );
@@ -251,7 +270,92 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="rk-reveal bg-[#1a1a1a] px-4 py-16 md:px-8">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-center text-xs font-black uppercase tracking-[0.2em] text-[#ff7a00]">What They're Saying</p>
+          <h2 className="mt-2 text-center text-4xl font-black uppercase text-white [font-family:'Space_Grotesk',sans-serif]">
+            The Tribe Speaks
+          </h2>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+
+            {/* Testimonial 1 */}
+            <motion.article
+              whileHover={{ y: -6, rotate: -0.8 }}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ff7a00] to-[#ff3d81] p-[2px]"
+            >
+              <div className="h-full rounded-3xl bg-[#111] p-7">
+                <div className="flex gap-1 text-[#ff7a00]">
+                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
+                </div>
+                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
+                  "I've tried so many 'healthy' snacks and they all taste like cardboard. RoastedKart is the first one that genuinely slaps. The millet box is my daily go-to now."
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#ff7a00] to-[#ff3d81] text-sm font-black text-white">
+                    PR
+                  </div>
+                  <div>
+                    <p className="text-sm font-black uppercase tracking-wide text-white">Priya Ramesh</p>
+                    <p className="text-xs text-[#888]">Nutritionist, Bengaluru</p>
+                  </div>
+                </div>
+              </div>
+            </motion.article>
+
+            {/* Testimonial 2 */}
+            <motion.article
+              whileHover={{ y: -6, rotate: 0.8 }}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5ff4f] to-[#8b5cf6] p-[2px]"
+            >
+              <div className="h-full rounded-3xl bg-[#111] p-7">
+                <div className="flex gap-1 text-[#d5ff4f]">
+                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
+                </div>
+                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
+                  "My gym trainer spotted these in my bag and now our entire squad is hooked. The protein macros are insane for a snack — 21g per pack is no joke."
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#d5ff4f] to-[#8b5cf6] text-sm font-black text-[#1a1a1a]">
+                    AK
+                  </div>
+                  <div>
+                    <p className="text-sm font-black uppercase tracking-wide text-white">Arjun Khanna</p>
+                    <p className="text-xs text-[#888]">Fitness Coach, Mumbai</p>
+                  </div>
+                </div>
+              </div>
+            </motion.article>
+
+            {/* Testimonial 3 */}
+            <motion.article
+              whileHover={{ y: -6, rotate: -0.8 }}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#8b5cf6] to-[#ff3d81] p-[2px]"
+            >
+              <div className="h-full rounded-3xl bg-[#111] p-7">
+                <div className="flex gap-1 text-[#c084fc]">
+                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
+                </div>
+                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
+                  "Ordered the All-in-One box for a house party and it was gone in 20 minutes. Everyone was asking where to buy more. This brand is going to be massive."
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#ff3d81] text-sm font-black text-white">
+                    SM
+                  </div>
+                  <div>
+                    <p className="text-sm font-black uppercase tracking-wide text-white">Sneha Mehta</p>
+                    <p className="text-xs text-[#888]">Food Blogger, Delhi</p>
+                  </div>
+                </div>
+              </div>
+            </motion.article>
+
+          </div>
+        </div>
+      </section>
+
       <section className="rk-reveal bg-gradient-to-r from-[#ff7a00] via-[#ff3d81] to-[#8b5cf6] px-4 py-14 text-white md:px-8">
+
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="text-4xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">Ready To Snack Smarter?</h2>
           <p className="mx-auto mt-3 max-w-2xl text-[#ffe7ff]">Get launch drops, bundle offers, and early access to new flavor madness.</p>

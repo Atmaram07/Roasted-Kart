@@ -1,13 +1,13 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+
 import { getProductBySlug, getVariantBySlug } from "../data/catalog";
 
 export default function ProductPage() {
   const { variantSlug } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+
   const [selectedVariantSlug, setSelectedVariantSlug] = useState(variantSlug);
 
   const variant = useMemo(() => getVariantBySlug(selectedVariantSlug), [selectedVariantSlug]);
@@ -34,7 +34,7 @@ export default function ProductPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div className={`rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px] shadow-[0_24px_50px_rgba(9,4,25,0.45)]`}>
             <div className="h-full rounded-3xl bg-white p-8">
-              <img src={product.image} alt={product.name} className="h-80 w-full rounded-2xl object-contain" />
+              <img src={product.image} alt={product.name} className="h-96 md:h-[400px] w-full rounded-2xl object-contain" />
               <div className="mt-6 rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#555]">
                 Packaging-first product visual placeholder. Add packshot image here.
               </div>
@@ -81,14 +81,7 @@ export default function ProductPage() {
             </div>
 
             <div className="mt-7 flex flex-wrap gap-3">
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => addToCart(variant)}
-                className="rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] px-6 py-3 text-sm font-black uppercase tracking-wide text-white"
-              >
-                Add to Cart
-              </motion.button>
-              <a href={variant.amazon} target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-wide text-[#1b1530]">
+              <a href={variant.amazon} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] px-6 py-3 text-sm font-black uppercase tracking-wide text-white">
                 Buy on Amazon
               </a>
               <a href={variant.flipkart} target="_blank" rel="noopener noreferrer" className="rounded-full border border-[#0000001f] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#1f1f1f]">

@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import SiteLayout from "./components/SiteLayout";
 import AboutPage from "./pages/AboutPage";
-import CartPage from "./pages/CartPage";
+
 import ContactPage from "./pages/ContactPage";
 import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/product/:variantSlug" element={<ProductPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/cart" element={<CartPage />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

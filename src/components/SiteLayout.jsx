@@ -1,18 +1,16 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import logoImg from "../assets/Roasted Kart Logo.png";
 import { storeLinks } from "../data/catalog";
-import { useCart } from "../context/CartContext";
 
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/cart", label: "Cart" },
 ];
 
 export default function SiteLayout() {
-  const { count } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -23,8 +21,8 @@ export default function SiteLayout() {
 
       <nav className="sticky top-0 z-50 border-b border-[#00000014] bg-[#fff8ef]/92 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
-          <NavLink to="/" className="text-2xl font-black uppercase tracking-tight [font-family:'Space_Grotesk',sans-serif]">
-            <span className="text-[#ff7a00]">Roasted</span>Kart
+          <NavLink to="/" className="flex items-center">
+            <img src={logoImg} alt="RoastedKart" className="h-20 w-auto object-contain" />
           </NavLink>
 
           <button
@@ -49,7 +47,6 @@ export default function SiteLayout() {
                 }
               >
                 {item.label}
-                {item.to === "/cart" ? ` (${count})` : ""}
               </NavLink>
             ))}
 
@@ -74,7 +71,6 @@ export default function SiteLayout() {
                 }
               >
                 {item.label}
-                {item.to === "/cart" ? ` (${count})` : ""}
               </NavLink>
             ))}
             <a
@@ -104,14 +100,15 @@ export default function SiteLayout() {
       <footer className="mt-12 border-t border-[#00000012] bg-[#fff2e0] px-4 py-10 text-[#3a3a3a] md:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-lg font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">RoastedKart</p>
-            <p className="mt-1 text-sm text-[#5a5a5a]">Snack party energy with cleaner crunch macros.</p>
+            <NavLink to="/">
+              <img src={logoImg} alt="RoastedKart" className="h-10 w-auto object-contain" />
+            </NavLink>
+            <p className="mt-2 text-sm text-[#5a5a5a]">Snack party energy with cleaner crunch macros.</p>
           </div>
           <div className="flex gap-5 text-xs font-black uppercase tracking-[0.12em] text-[#2b2b2b]">
             <NavLink to="/shop" className="hover:text-[#ff6b00]">Shop</NavLink>
             <NavLink to="/about" className="hover:text-[#ff6b00]">About</NavLink>
             <NavLink to="/contact" className="hover:text-[#ff6b00]">Contact</NavLink>
-            <NavLink to="/cart" className="hover:text-[#ff6b00]">Cart</NavLink>
           </div>
           <p className="text-xs text-[#6d6d6d]">Copyright 2026 RoastedKart.</p>
         </div>

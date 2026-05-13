@@ -1,15 +1,14 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+
 import { products } from "../data/catalog";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ShopPage() {
-  const { addToCart } = useCart();
   const [categoryFilter, setCategoryFilter] = useState("All");
 
   const categories = useMemo(() => ["All", ...products.map((product) => product.category)], []);
@@ -74,7 +73,7 @@ export default function ShopPage() {
                 whileHover={{ y: -8, rotate: idx % 2 === 0 ? -1 : 1, scale: 1.02 }}
                 className="group rounded-3xl border border-[#00000012] bg-gradient-to-br from-[#fff6eb] to-[#fff1e1] p-5 shadow-[0_14px_30px_rgba(9,4,25,0.45)]"
               >
-                <img src={product.image} alt={product.name} className="h-36 w-full rounded-2xl object-contain" />
+                <img src={product.image} alt={product.name} className="h-56 w-full rounded-2xl object-contain" />
                 <p className="mt-4 text-[11px] font-black uppercase tracking-[0.12em] text-[#ffca3a]">{product.category}</p>
                 <h3 className="mt-2 text-2xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">{product.name}</h3>
                 <p className="mt-1 text-sm text-[#555]">{product.shortDescription}</p>
@@ -89,13 +88,9 @@ export default function ShopPage() {
                     <p className="text-xl font-black text-[#d5ff4f]">Rs {variant.price}</p>
                     <p className="text-xs text-[#b9aacd] line-through">Rs {variant.mrp}</p>
                   </div>
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => addToCart(variant)}
-                    className="rounded-full bg-[#ff7a00] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-white"
-                  >
-                    Add to Cart
-                  </motion.button>
+                  <Link to={`/product/${variant.slug}`} className="rounded-full bg-[#ff7a00] px-4 py-2 text-[11px] font-black uppercase tracking-wide text-white">
+                    View Details
+                  </Link>
                 </div>
 
                 <div className="mt-4 flex gap-2 opacity-0 transition group-hover:opacity-100">

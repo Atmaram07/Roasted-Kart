@@ -1,12 +1,10 @@
-﻿import milletBoxImage from "../assets/millet-box.svg";
-import proteinBoxImage from "../assets/protein-box.svg";
-import allInOneBoxImage from "../assets/all-in-one-box.svg";
+import milletBoxImage from "../assets/millet-box.png";
+import proteinBoxImage from "../assets/protein-box.png";
+import allInOneBoxImage from "../assets/all-in-one-box.png";
 
 export const storeLinks = {
   amazon: "https://www.amazon.in/s?k=roastedkart+snacks",
   flipkart: "https://www.flipkart.com/search?q=roastedkart+snacks",
-  blinkit: "https://blinkit.com",
-  zepto: "https://www.zeptonow.com",
 };
 
 export const products = [
@@ -35,7 +33,7 @@ export const products = [
         slug: "the-great-indian-millet-box-pack",
         name: "Millet Box Pack",
         weight: "4 x 65 g",
-        price: 999,
+        price: 316,
         mrp: 1199,
         tags: ["Pack Of 4", "Millet Mix"],
         protein: "8g",
@@ -70,7 +68,7 @@ export const products = [
         slug: "the-great-indian-protein-box-pack",
         name: "Protein Box Pack",
         weight: "3 x 60 g",
-        price: 749,
+        price: 237,
         mrp: 899,
         tags: ["Pack Of 3", "Soya Pops"],
         protein: "21g",
