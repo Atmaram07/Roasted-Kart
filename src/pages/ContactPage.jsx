@@ -1,9 +1,7 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 const social = [
-  { label: "Instagram", handle: "@roastedkart" },
-  { label: "YouTube", handle: "RoastedKart Snacks" },
-  { label: "LinkedIn", handle: "RoastedKart" },
+  { label: "Instagram", handle: "@roastedkart", href: "https://www.instagram.com/roastedkart" },
 ];
 
 export default function ContactPage() {
@@ -48,10 +46,10 @@ export default function ContactPage() {
             <div className="rounded-3xl border border-[#00000012] bg-white p-6">
               <h2 className="text-2xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Reach Us</h2>
               <div className="mt-4 space-y-3 text-sm text-[#555]">
-                <p><span className="font-black text-[#1f1f1f]">Email:</span> hello@roastedkart.com</p>
-                <p><span className="font-black text-[#1f1f1f]">Phone:</span> +91 98765 43210</p>
+                <p><span className="font-black text-[#1f1f1f]">Email:</span> dietfactoryindia@gmail.com</p>
+                <p><span className="font-black text-[#1f1f1f]">Phone:</span> +91 7425049203</p>
                 <p><span className="font-black text-[#1f1f1f]">Hours:</span> Mon - Sat, 10:00 AM - 6:00 PM</p>
-                <p><span className="font-black text-[#1f1f1f]">Address:</span> Bengaluru, Karnataka, India</p>
+                <p><span className="font-black text-[#1f1f1f]">Address:</span> E-316, Mittal Industries, Road No.-16, Soibir Enterprises, Vishwakarma Industrial Area, Jaipur, Rajasthan - 302013</p>
               </div>
             </div>
 
@@ -59,10 +57,17 @@ export default function ContactPage() {
               <h2 className="text-2xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Follow The Chaos</h2>
               <div className="mt-4 space-y-3">
                 {social.map((item) => (
-                  <motion.div key={item.label} whileHover={{ y: -3 }} className="rounded-xl border border-[#00000012] bg-white p-3">
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ y: -3 }}
+                    className="block rounded-xl border border-[#00000012] bg-white p-3 transition hover:border-[#ff6b00]/40 hover:shadow-md cursor-pointer"
+                  >
                     <p className="text-xs font-black uppercase tracking-[0.12em] text-[#ff6b00]">{item.label}</p>
                     <p className="text-sm text-[#333]">{item.handle}</p>
-                  </motion.div>
+                  </motion.a>
                 ))}
               </div>
             </div>

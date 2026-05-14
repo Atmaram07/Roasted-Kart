@@ -1,4 +1,4 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 const values = [
   {
@@ -49,8 +49,7 @@ export default function AboutPage() {
 
         <div className="rounded-3xl border border-[#00000012] bg-white p-7">
           <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Founder Story</h2>
-          <div className="mt-4 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="space-y-3 text-[#555]">
+          <div className="mt-4 space-y-3 text-[#555]">
               <p>
                 RoastedKart started with one frustration: health snacks felt boring and snacks with taste felt heavy.
                 We wanted both worlds in one bite.
@@ -62,12 +61,6 @@ export default function AboutPage() {
               <p>
                 Today, RoastedKart is our answer to snack guilt: flavor you crave with ingredients you can trust.
               </p>
-            </div>
-            <div className="rounded-2xl border border-[#00000012] bg-[#fff4e9] p-6 text-center">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ff6b00]">Founder Visual Placeholder</p>
-              <div className="mt-3 h-52 rounded-xl bg-gradient-to-br from-[#ff7a00] via-[#ff3d81] to-[#8b5cf6]" />
-              <p className="mt-3 text-sm text-[#555]">Add founder or team image here.</p>
-            </div>
           </div>
         </div>
 

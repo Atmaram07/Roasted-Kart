@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { products, storeLinks } from "../data/catalog";
 import soyaPopsGraphic from "../assets/soya-pops.png";
@@ -9,7 +9,7 @@ import soyaPopsGraphic from "../assets/soya-pops.png";
 gsap.registerPlugin(ScrollTrigger);
 
 const benefits = ["ROASTED NOT FRIED", "NO PALM OIL", "NO MAIDA", "NO ARTIFICIAL FLAVOURS"];
-const partners = ["Amazon", "Flipkart"];
+const partners = ["Amazon"];
 const press = ["Buzzfeed", "YourStory", "Economic Times", "FoodTech India"];
 const reviews = [
   "Finished 3 packs. No regrets.",
@@ -17,11 +17,66 @@ const reviews = [
   "Finally a snack that tastes fun and tracks clean.",
 ];
 
+const testimonials = [
+  {
+    quote: "I've tried so many 'healthy' snacks and they all taste like cardboard. RoastedKart is the first one that genuinely slaps. The millet box is my daily go-to now.",
+    name: "Priya Ramesh",
+    role: "Nutritionist, Bengaluru",
+    initials: "PR",
+    gradient: "from-[#ff7a00] to-[#ff3d81]",
+    stars: "#ff7a00",
+  },
+  {
+    quote: "My gym trainer spotted these in my bag and now our entire squad is hooked. The protein macros are insane for a snack — 21g per pack is no joke.",
+    name: "Arjun Khanna",
+    role: "Fitness Coach, Mumbai",
+    initials: "AK",
+    gradient: "from-[#d5ff4f] to-[#8b5cf6]",
+    stars: "#d5ff4f",
+    initialsText: "text-[#1a1a1a]",
+  },
+  {
+    quote: "Ordered the All-in-One box for a house party and it was gone in 20 minutes. Everyone was asking where to buy more. This brand is going to be massive.",
+    name: "Sneha Mehta",
+    role: "Food Blogger, Delhi",
+    initials: "SM",
+    gradient: "from-[#8b5cf6] to-[#ff3d81]",
+    stars: "#c084fc",
+  },
+  {
+    quote: "Best guilt-free snack I've found in years. Finally something that doesn't compromise on taste. The peri peri soya pops are dangerously addictive.",
+    name: "Rahul Verma",
+    role: "Entrepreneur, Jaipur",
+    initials: "RV",
+    gradient: "from-[#06b6d4] to-[#6366f1]",
+    stars: "#67e8f9",
+  },
+];
+
 export default function HomePage() {
   const heroProduct = products[0];
   const [activeVariant, setActiveVariant] = useState(0);
   const [email, setEmail] = useState("");
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const testimonialTimer = useRef(null);
   const current = useMemo(() => heroProduct.variants[activeVariant], [heroProduct.variants, activeVariant]);
+
+  const startTestimonialTimer = useCallback(() => {
+    testimonialTimer.current = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 4000);
+  }, []);
+
+  useEffect(() => {
+    startTestimonialTimer();
+    return () => clearInterval(testimonialTimer.current);
+  }, [startTestimonialTimer]);
+
+  const goToTestimonial = (idx) => {
+    clearInterval(testimonialTimer.current);
+    setActiveTestimonial(idx);
+    startTestimonialTimer();
+  };
 
   useEffect(() => {
     const autoRotate = setInterval(() => {
@@ -271,88 +326,78 @@ export default function HomePage() {
       </section>
 
       <section className="rk-reveal bg-[#1a1a1a] px-4 py-16 md:px-8">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto max-w-4xl">
           <p className="text-center text-xs font-black uppercase tracking-[0.2em] text-[#ff7a00]">What They're Saying</p>
           <h2 className="mt-2 text-center text-4xl font-black uppercase text-white [font-family:'Space_Grotesk',sans-serif]">
             The Tribe Speaks
           </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
 
-            {/* Testimonial 1 */}
-            <motion.article
-              whileHover={{ y: -6, rotate: -0.8 }}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ff7a00] to-[#ff3d81] p-[2px]"
+          {/* Carousel */}
+          <div className="relative mt-10 overflow-hidden rounded-3xl">
+            <AnimatePresence mode="wait">
+              {testimonials.map((t, idx) =>
+                idx === activeTestimonial ? (
+                  <motion.div
+                    key={t.name}
+                    initial={{ opacity: 0, x: 60 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -60 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    className={`rounded-3xl bg-gradient-to-br ${t.gradient} p-[2px]`}
+                  >
+                    <div className="rounded-3xl bg-[#111] p-8 md:p-10">
+                      <div className="flex gap-1" style={{ color: t.stars }}>
+                        {"★★★★★".split("").map((s, i) => <span key={i} className="text-xl">{s}</span>)}
+                      </div>
+                      <p className="mt-5 text-lg font-semibold leading-relaxed text-[#e8e8e8] md:text-xl">
+                        "{t.quote}"
+                      </p>
+                      <div className="mt-7 flex items-center gap-4">
+                        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${t.gradient} text-sm font-black ${t.initialsText ?? "text-white"}`}>
+                          {t.initials}
+                        </div>
+                        <div>
+                          <p className="font-black uppercase tracking-wide text-white">{t.name}</p>
+                          <p className="text-xs text-[#888]">{t.role}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : null
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Controls */}
+          <div className="mt-6 flex items-center justify-center gap-4">
+            <button
+              onClick={() => goToTestimonial((activeTestimonial - 1 + testimonials.length) % testimonials.length)}
+              aria-label="Previous testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ffffff20] bg-[#ffffff10] text-white transition hover:bg-[#ff7a00] hover:border-[#ff7a00]"
             >
-              <div className="h-full rounded-3xl bg-[#111] p-7">
-                <div className="flex gap-1 text-[#ff7a00]">
-                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
-                </div>
-                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
-                  "I've tried so many 'healthy' snacks and they all taste like cardboard. RoastedKart is the first one that genuinely slaps. The millet box is my daily go-to now."
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#ff7a00] to-[#ff3d81] text-sm font-black text-white">
-                    PR
-                  </div>
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-wide text-white">Priya Ramesh</p>
-                    <p className="text-xs text-[#888]">Nutritionist, Bengaluru</p>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
-
-            {/* Testimonial 2 */}
-            <motion.article
-              whileHover={{ y: -6, rotate: 0.8 }}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5ff4f] to-[#8b5cf6] p-[2px]"
+              ‹
+            </button>
+            <div className="flex gap-2">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goToTestimonial(idx)}
+                  aria-label={`Go to testimonial ${idx + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${idx === activeTestimonial ? "w-6 bg-[#ff7a00]" : "w-2 bg-[#444]"}`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={() => goToTestimonial((activeTestimonial + 1) % testimonials.length)}
+              aria-label="Next testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ffffff20] bg-[#ffffff10] text-white transition hover:bg-[#ff7a00] hover:border-[#ff7a00]"
             >
-              <div className="h-full rounded-3xl bg-[#111] p-7">
-                <div className="flex gap-1 text-[#d5ff4f]">
-                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
-                </div>
-                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
-                  "My gym trainer spotted these in my bag and now our entire squad is hooked. The protein macros are insane for a snack — 21g per pack is no joke."
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#d5ff4f] to-[#8b5cf6] text-sm font-black text-[#1a1a1a]">
-                    AK
-                  </div>
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-wide text-white">Arjun Khanna</p>
-                    <p className="text-xs text-[#888]">Fitness Coach, Mumbai</p>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
-
-            {/* Testimonial 3 */}
-            <motion.article
-              whileHover={{ y: -6, rotate: -0.8 }}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#8b5cf6] to-[#ff3d81] p-[2px]"
-            >
-              <div className="h-full rounded-3xl bg-[#111] p-7">
-                <div className="flex gap-1 text-[#c084fc]">
-                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-lg">{s}</span>)}
-                </div>
-                <p className="mt-4 text-base font-semibold leading-relaxed text-[#e8e8e8]">
-                  "Ordered the All-in-One box for a house party and it was gone in 20 minutes. Everyone was asking where to buy more. This brand is going to be massive."
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#ff3d81] text-sm font-black text-white">
-                    SM
-                  </div>
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-wide text-white">Sneha Mehta</p>
-                    <p className="text-xs text-[#888]">Food Blogger, Delhi</p>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
-
+              ›
+            </button>
           </div>
         </div>
       </section>
+
 
       <section className="rk-reveal bg-gradient-to-r from-[#ff7a00] via-[#ff3d81] to-[#8b5cf6] px-4 py-14 text-white md:px-8">
 
