@@ -285,7 +285,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="rk-reveal bg-white px-4 py-14 md:px-8">
+      {/* <section className="rk-reveal bg-white px-4 py-14 md:px-8">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-center text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Watch The Crunch Story</h2>
           <div className="mt-7 overflow-hidden rounded-3xl border border-[#00000014] bg-black shadow-[0_20px_40px_rgba(0,0,0,0.2)]">
@@ -294,7 +294,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="rk-reveal border-y border-[#00000012] bg-[#fff8ef] px-4 py-14 md:px-8">
         <div className="mx-auto max-w-7xl">
@@ -302,7 +302,7 @@ export default function HomePage() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {reviews.map((review, idx) => (
               <motion.article key={review} whileHover={{ y: -4 }} className={`rounded-2xl p-5 ${idx % 2 === 0 ? "bg-[#ff7a00] text-white" : "bg-white text-[#2c2146] border border-[#00000012]"}`}>
-                <p className="text-sm font-black uppercase tracking-[0.1em]">@taali-style-vibes</p>
+                <p className="text-sm font-black uppercase tracking-[0.1em]">@RoastiVibes</p>
                 <p className="mt-3 text-base font-semibold">{review}</p>
               </motion.article>
             ))}
