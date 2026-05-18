@@ -4,6 +4,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { products, storeLinks } from "../data/catalog";
+import hero1Image from "../assets/hero 1.png";
+import hero2Image from "../assets/hero 2.png";
+import hero3Image from "../assets/hero 3.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,67 +65,70 @@ const featuredTestimonial = {
   sticker: "Repeat ordered in 48 hrs",
 };
 
-const heroImageModules = import.meta.glob("../assets/hero *.{png,jpg,jpeg,webp,avif,svg}", {
-  eager: true,
-  import: "default",
-});
-
-const heroImages = Object.entries(heroImageModules)
-  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
-  .map(([, src], idx) => ({
-    id: `hero-${idx + 1}`,
-    name: `Hero ${idx + 1}`,
-    image: src,
-  }));
-
-const heroThemes = [
+const heroCollageImages = [
   {
-    glow: "from-[#ffcd94]/55 via-[#ff7a00]/22 to-transparent",
-    bubblePrimary: "bg-[#ff7a00] text-white",
-    bubbleSecondary: "bg-white text-[#2a1c22]",
-    bubbleAccent: "bg-[#ffd26f] text-[#3a2400]",
+    id: "hero-1",
+    name: "RoastedKart Hero 1",
+    image: hero1Image,
+    frameClassName:
+      "left-0 top-24 h-[205px] w-[150px] rotate-[-10deg] md:left-6 md:top-28 md:h-[255px] md:w-[185px]",
+    float: { y: [0, -10, 0], rotate: [-10, -7, -10] },
+    duration: 4.8,
   },
   {
-    glow: "from-[#efffa8]/55 via-[#d5ff4f]/24 to-transparent",
-    bubblePrimary: "bg-[#d5ff4f] text-[#182300]",
-    bubbleSecondary: "bg-white text-[#182300]",
-    bubbleAccent: "bg-[#1f1f1f] text-white",
+    id: "hero-2",
+    name: "RoastedKart Hero 2",
+    image: hero2Image,
+    frameClassName:
+      "left-1/2 top-12 z-20 h-[285px] w-[220px] -translate-x-1/2 rotate-[-2deg] md:top-14 md:h-[390px] md:w-[300px]",
+    float: { y: [0, -14, 0], rotate: [-2, 1, -2] },
+    duration: 4.2,
   },
   {
-    glow: "from-[#d7c6ff]/55 via-[#8b5cf6]/20 to-transparent",
-    bubblePrimary: "bg-[#8b5cf6] text-white",
-    bubbleSecondary: "bg-white text-[#221530]",
-    bubbleAccent: "bg-[#8be8ff] text-[#082733]",
+    id: "hero-3",
+    name: "RoastedKart Hero 3",
+    image: hero3Image,
+    frameClassName:
+      "bottom-14 right-1 h-[215px] w-[155px] rotate-[9deg] md:bottom-16 md:right-5 md:h-[265px] md:w-[190px]",
+    float: { y: [0, 10, 0], rotate: [9, 6, 9] },
+    duration: 5,
   },
 ];
 
-const heroCallouts = [
-  [
-    { label: "Snack Drop", text: "Crunch that looks loud" },
-    { label: "Clean Win", text: "No fry. No greasy drag." },
-    { label: "Desk Stash", text: "Always gone too fast" },
-  ],
-  [
-    { label: "Protein Pop", text: "Gym bag favorite" },
-    { label: "Snack Math", text: "Big taste, better macros" },
-    { label: "Repeat Buy", text: "Post-workout craving fix" },
-  ],
-  [
-    { label: "Trail Box", text: "All 8 flavours inside" },
-    { label: "Party Fuel", text: "Made for passing around" },
-    { label: "Crowd Hook", text: "One box, zero leftovers" },
-  ],
+const heroBubbleNotes = [
+  {
+    id: "bubble-1",
+    label: "Snack Drop",
+    text: "Crunch that looks loud",
+    tone: "bg-[#ff7a00] text-white",
+    className: "left-0 top-8 max-w-[10rem] rotate-[-7deg]",
+    float: { y: [0, -6, 0], rotate: [-7, -4, -7] },
+    duration: 3.8,
+  },
+  {
+    id: "bubble-2",
+    label: "Clean Win",
+    text: "No fry. No greasy drag.",
+    tone: "right-0 top-24 hidden bg-white text-[#2a1c22] sm:block",
+    className: "max-w-[10rem] rotate-[6deg]",
+    float: { y: [0, 6, 0], rotate: [6, 3, 6] },
+    duration: 4.1,
+  },
+  {
+    id: "bubble-3",
+    label: "Desk Stash",
+    text: "Always gone too fast",
+    tone: "bottom-10 left-8 hidden bg-[#ffd26f] text-[#3a2400] sm:block",
+    className: "max-w-[10rem] rotate-[-5deg]",
+    float: { y: [0, 7, 0], rotate: [-5, -2, -5] },
+    duration: 4.3,
+  },
 ];
 
 export default function HomePage() {
-  const heroShowcase = heroImages.length >= 3 ? heroImages.slice(0, 3) : products.slice(0, 3);
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [email, setEmail] = useState("");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const testimonialTimer = useRef(null);
-  const activeHero = heroShowcase[activeHeroIndex];
-  const activeHeroTheme = heroThemes[activeHeroIndex % heroThemes.length];
-  const activeHeroCallouts = heroCallouts[activeHeroIndex % heroCallouts.length];
 
   const startTestimonialTimer = useCallback(() => {
     testimonialTimer.current = setInterval(() => {
@@ -140,20 +146,6 @@ export default function HomePage() {
     setActiveTestimonial(idx);
     startTestimonialTimer();
   };
-
-  useEffect(() => {
-    heroShowcase.forEach((item) => {
-      const img = new Image();
-      img.src = item.image;
-    });
-  }, [heroShowcase]);
-
-  useEffect(() => {
-    const autoRotate = setInterval(() => {
-      setActiveHeroIndex((prev) => (prev + 1) % heroShowcase.length);
-    }, 4200);
-    return () => clearInterval(autoRotate);
-  }, [heroShowcase.length]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -220,97 +212,43 @@ export default function HomePage() {
               animate={{ scale: [0.98, 1, 0.98] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className={`absolute left-1/2 top-12 h-80 w-80 -translate-x-1/2 rounded-full bg-gradient-to-br ${activeHeroTheme.glow} blur-3xl`} />
+              <div className="absolute left-1/2 top-12 h-80 w-80 -translate-x-1/2 rounded-full bg-gradient-to-br from-[#ffcd94]/55 via-[#ff7a00]/22 to-transparent blur-3xl" />
               <div className="absolute left-5 top-28 h-24 w-24 rounded-full border border-white/45 bg-white/25 backdrop-blur-sm md:left-14 md:h-28 md:w-28" />
               <div className="absolute right-3 top-16 h-16 w-16 rounded-full border border-black/5 bg-[#d5ff4f]/40 backdrop-blur-sm md:right-14 md:h-20 md:w-20" />
               <div className="absolute bottom-16 right-8 h-20 w-20 rounded-full border border-white/40 bg-white/18 backdrop-blur-sm md:h-24 md:w-24" />
               <div className="absolute bottom-8 left-12 hidden h-14 w-14 rounded-full border border-[#ff7a00]/20 bg-[#ff7a00]/10 backdrop-blur-sm md:block" />
 
-              <AnimatePresence mode="wait">
+              {heroBubbleNotes.map((bubble) => (
                 <motion.div
-                  key={`${activeHero.id}-callout-a`}
-                  initial={{ opacity: 0, y: -16, rotate: -7 }}
-                  animate={{ opacity: 1, y: [0, -6, 0], rotate: [-7, -4, -7] }}
-                  exit={{ opacity: 0, y: -16, rotate: -7 }}
-                  transition={{
-                    opacity: { duration: 0.35 },
-                    y: { duration: 3.8, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 3.8, repeat: Infinity, ease: "easeInOut" },
-                  }}
-                  className={`absolute left-0 top-8 z-30 max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${activeHeroTheme.bubblePrimary}`}
+                  key={bubble.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: bubble.float.y, rotate: bubble.float.rotate }}
+                  transition={{ opacity: { duration: 0.45 }, y: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" }, rotate: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" } }}
+                  className={`absolute z-30 rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${bubble.className} ${bubble.tone}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-80">{activeHeroCallouts[0].label}</p>
-                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[0].text}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{bubble.label}</p>
+                  <p className="mt-1 text-sm font-black uppercase leading-tight">{bubble.text}</p>
                 </motion.div>
-              </AnimatePresence>
+              ))}
 
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeHero.id}-callout-b`}
-                  initial={{ opacity: 0, x: 16, rotate: 6 }}
-                  animate={{ opacity: 1, y: [0, 6, 0], rotate: [6, 3, 6] }}
-                  exit={{ opacity: 0, x: 16, rotate: 6 }}
-                  transition={{
-                    opacity: { duration: 0.35 },
-                    y: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
-                  }}
-                  className={`absolute right-0 top-24 z-30 hidden max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:block ${activeHeroTheme.bubbleSecondary}`}
-                >
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-70">{activeHeroCallouts[1].label}</p>
-                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[1].text}</p>
-                </motion.div>
-              </AnimatePresence>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeHero.id}-callout-c`}
-                  initial={{ opacity: 0, y: 16, rotate: -5 }}
-                  animate={{ opacity: 1, y: [0, 7, 0], rotate: [-5, -2, -5] }}
-                  exit={{ opacity: 0, y: 16, rotate: -5 }}
-                  transition={{
-                    opacity: { duration: 0.35 },
-                    y: { duration: 4.3, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 4.3, repeat: Infinity, ease: "easeInOut" },
-                  }}
-                  className={`absolute bottom-10 left-8 z-30 hidden max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:block ${activeHeroTheme.bubbleAccent}`}
-                >
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{activeHeroCallouts[2].label}</p>
-                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[2].text}</p>
-                </motion.div>
-              </AnimatePresence>
-
-              <AnimatePresence mode="wait">
+              {heroCollageImages.map((item) => (
                 <motion.img
-                  key={activeHero.id}
-                  src={activeHero.image}
-                  alt={activeHero.name}
+                  key={item.id}
+                  src={item.image}
+                  alt={item.name}
                   loading="eager"
-                  fetchPriority="high"
                   decoding="async"
-                  className="absolute left-1/2 top-16 z-20 h-[285px] w-[220px] -translate-x-1/2 rounded-[2.4rem] object-cover shadow-[0_36px_80px_rgba(0,0,0,0.22)] ring-1 ring-white/70 md:h-[390px] md:w-[300px]"
-                  initial={{ opacity: 0, y: 20, rotate: -2, scale: 0.94 }}
-                  animate={{ opacity: 1, y: [0, -14, 0], rotate: [-2, 1, -2], scale: 1 }}
-                  exit={{ opacity: 0, y: -16, rotate: 2, scale: 0.94 }}
+                  className={`absolute rounded-[2.2rem] object-cover shadow-[0_30px_70px_rgba(0,0,0,0.2)] ring-1 ring-white/70 ${item.frameClassName}`}
+                  initial={{ opacity: 0, y: 18, scale: 0.95 }}
+                  animate={{ opacity: 1, y: item.float.y, rotate: item.float.rotate, scale: 1 }}
                   transition={{
-                    opacity: { duration: 0.4 },
-                    scale: { duration: 0.4 },
-                    y: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
+                    opacity: { duration: 0.5, delay: item.id === "hero-2" ? 0.1 : 0.2 },
+                    scale: { duration: 0.5, delay: item.id === "hero-2" ? 0.1 : 0.2 },
+                    y: { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
                   }}
                 />
-              </AnimatePresence>
-
-              <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 gap-2">
-                {heroShowcase.map((item, idx) => (
-                  <span
-                    key={item.id}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      idx === activeHeroIndex ? "w-10 bg-[#1f1f1f]" : "w-2 bg-[#1f1f1f]/25"
-                    }`}
-                  />
-                ))}
-              </div>
+              ))}
             </motion.div>
           </motion.div>
         </div>
