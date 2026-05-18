@@ -142,27 +142,7 @@ export default function ProductPage() {
               <p className="mt-1 text-xs text-[#aaa]">Inclusive of all taxes · Free delivery above ₹499</p>
             </div>
 
-            {/* Variant selector */}
-            {product.variants.length > 1 && (
-              <div>
-                <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#888]">Choose Pack</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => onVariantChange(item.slug)}
-                      className={`rounded-full border px-5 py-2 text-xs font-black uppercase tracking-wide transition ${
-                        item.slug === selectedVariantSlug
-                          ? "border-[#ff6b00] bg-[#ff6b00] text-white shadow-[0_4px_14px_rgba(255,107,0,0.35)]"
-                          : "border-[#00000018] bg-white text-[#444] hover:border-[#ff6b00]/50"
-                      }`}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+      
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3">
@@ -175,14 +155,14 @@ export default function ProductPage() {
                 >
                   <span>🛒</span> Buy on Amazon
                 </a>
-                <a
+                {/* <a
                   href={variant.flipkart}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[#1f1f1f] bg-white py-4 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:bg-[#1f1f1f] hover:text-white"
                 >
                   Buy on Flipkart
-                </a>
+                </a> */}
               </div>
               <a
                 href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}

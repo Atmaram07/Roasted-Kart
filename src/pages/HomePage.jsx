@@ -1,10 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { products, storeLinks } from "../data/catalog";
-import soyaPopsGraphic from "../assets/soya-pops.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,13 +52,77 @@ const testimonials = [
   },
 ];
 
+const featuredTestimonial = {
+  kicker: "Taste test winner",
+  quote:
+    "I ordered it for the macros. I reordered it for the crunch.",
+  name: "Naina Kapoor",
+  role: "Brand Strategist, Gurugram",
+  subtext: "Healthy snacks usually ask you to lower your expectations. This one doesn't.",
+  sticker: "Repeat ordered in 48 hrs",
+};
+
+const heroImageModules = import.meta.glob("../assets/hero *.{png,jpg,jpeg,webp,avif,svg}", {
+  eager: true,
+  import: "default",
+});
+
+const heroImages = Object.entries(heroImageModules)
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([, src], idx) => ({
+    id: `hero-${idx + 1}`,
+    name: `Hero ${idx + 1}`,
+    image: src,
+  }));
+
+const heroThemes = [
+  {
+    glow: "from-[#ffcd94]/55 via-[#ff7a00]/22 to-transparent",
+    bubblePrimary: "bg-[#ff7a00] text-white",
+    bubbleSecondary: "bg-white text-[#2a1c22]",
+    bubbleAccent: "bg-[#ffd26f] text-[#3a2400]",
+  },
+  {
+    glow: "from-[#efffa8]/55 via-[#d5ff4f]/24 to-transparent",
+    bubblePrimary: "bg-[#d5ff4f] text-[#182300]",
+    bubbleSecondary: "bg-white text-[#182300]",
+    bubbleAccent: "bg-[#1f1f1f] text-white",
+  },
+  {
+    glow: "from-[#d7c6ff]/55 via-[#8b5cf6]/20 to-transparent",
+    bubblePrimary: "bg-[#8b5cf6] text-white",
+    bubbleSecondary: "bg-white text-[#221530]",
+    bubbleAccent: "bg-[#8be8ff] text-[#082733]",
+  },
+];
+
+const heroCallouts = [
+  [
+    { label: "Snack Drop", text: "Crunch that looks loud" },
+    { label: "Clean Win", text: "No fry. No greasy drag." },
+    { label: "Desk Stash", text: "Always gone too fast" },
+  ],
+  [
+    { label: "Protein Pop", text: "Gym bag favorite" },
+    { label: "Snack Math", text: "Big taste, better macros" },
+    { label: "Repeat Buy", text: "Post-workout craving fix" },
+  ],
+  [
+    { label: "Trail Box", text: "All 8 flavours inside" },
+    { label: "Party Fuel", text: "Made for passing around" },
+    { label: "Crowd Hook", text: "One box, zero leftovers" },
+  ],
+];
+
 export default function HomePage() {
-  const heroProduct = products[0];
-  const [activeVariant, setActiveVariant] = useState(0);
+  const heroShowcase = heroImages.length >= 3 ? heroImages.slice(0, 3) : products.slice(0, 3);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [email, setEmail] = useState("");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const testimonialTimer = useRef(null);
-  const current = useMemo(() => heroProduct.variants[activeVariant], [heroProduct.variants, activeVariant]);
+  const activeHero = heroShowcase[activeHeroIndex];
+  const activeHeroTheme = heroThemes[activeHeroIndex % heroThemes.length];
+  const activeHeroCallouts = heroCallouts[activeHeroIndex % heroCallouts.length];
 
   const startTestimonialTimer = useCallback(() => {
     testimonialTimer.current = setInterval(() => {
@@ -79,11 +142,18 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    heroShowcase.forEach((item) => {
+      const img = new Image();
+      img.src = item.image;
+    });
+  }, [heroShowcase]);
+
+  useEffect(() => {
     const autoRotate = setInterval(() => {
-      setActiveVariant((prev) => (prev + 1) % heroProduct.variants.length);
-    }, 2600);
+      setActiveHeroIndex((prev) => (prev + 1) % heroShowcase.length);
+    }, 4200);
     return () => clearInterval(autoRotate);
-  }, [heroProduct.variants.length]);
+  }, [heroShowcase.length]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -145,30 +215,102 @@ export default function HomePage() {
 
           <motion.div className="relative" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <motion.div
-              className="mb-6 overflow-hidden rounded-[2rem] border border-[#00000014] bg-white shadow-[0_24px_50px_rgba(255,107,0,0.18)]"
+              className="relative mb-6 h-[380px] md:h-[500px]"
               initial={{ scale: 0.98 }}
               animate={{ scale: [0.98, 1, 0.98] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <motion.img
-                src={soyaPopsGraphic}
-                alt="Healthy soya pops snack graphic"
-                className="w-full max-w-full object-cover"
-                initial={{ y: 0, rotate: 0 }}
-                animate={{ y: [0, -14, 0], rotate: [0, 2, 0, -2, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-[#ff7a00] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white shadow-lg shadow-[#ff7a0014]">
-                Healthy Soya Pops
-              </div>
-            </motion.div>
+              <div className={`absolute left-1/2 top-12 h-80 w-80 -translate-x-1/2 rounded-full bg-gradient-to-br ${activeHeroTheme.glow} blur-3xl`} />
+              <div className="absolute left-5 top-28 h-24 w-24 rounded-full border border-white/45 bg-white/25 backdrop-blur-sm md:left-14 md:h-28 md:w-28" />
+              <div className="absolute right-3 top-16 h-16 w-16 rounded-full border border-black/5 bg-[#d5ff4f]/40 backdrop-blur-sm md:right-14 md:h-20 md:w-20" />
+              <div className="absolute bottom-16 right-8 h-20 w-20 rounded-full border border-white/40 bg-white/18 backdrop-blur-sm md:h-24 md:w-24" />
+              <div className="absolute bottom-8 left-12 hidden h-14 w-14 rounded-full border border-[#ff7a00]/20 bg-[#ff7a00]/10 backdrop-blur-sm md:block" />
 
-            <motion.div
-              className="absolute -right-6 top-10 flex h-20 w-20 items-center justify-center rounded-full bg-[#d5ff4f] text-center text-xs font-black uppercase tracking-[0.08em] text-[#1b2a00] shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
-              animate={{ x: [0, -10, 0], y: [0, -8, 0] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              Soya Pop
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeHero.id}-callout-a`}
+                  initial={{ opacity: 0, y: -16, rotate: -7 }}
+                  animate={{ opacity: 1, y: [0, -6, 0], rotate: [-7, -4, -7] }}
+                  exit={{ opacity: 0, y: -16, rotate: -7 }}
+                  transition={{
+                    opacity: { duration: 0.35 },
+                    y: { duration: 3.8, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 3.8, repeat: Infinity, ease: "easeInOut" },
+                  }}
+                  className={`absolute left-0 top-8 z-30 max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${activeHeroTheme.bubblePrimary}`}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-80">{activeHeroCallouts[0].label}</p>
+                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[0].text}</p>
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeHero.id}-callout-b`}
+                  initial={{ opacity: 0, x: 16, rotate: 6 }}
+                  animate={{ opacity: 1, y: [0, 6, 0], rotate: [6, 3, 6] }}
+                  exit={{ opacity: 0, x: 16, rotate: 6 }}
+                  transition={{
+                    opacity: { duration: 0.35 },
+                    y: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
+                  }}
+                  className={`absolute right-0 top-24 z-30 hidden max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:block ${activeHeroTheme.bubbleSecondary}`}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-70">{activeHeroCallouts[1].label}</p>
+                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[1].text}</p>
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeHero.id}-callout-c`}
+                  initial={{ opacity: 0, y: 16, rotate: -5 }}
+                  animate={{ opacity: 1, y: [0, 7, 0], rotate: [-5, -2, -5] }}
+                  exit={{ opacity: 0, y: 16, rotate: -5 }}
+                  transition={{
+                    opacity: { duration: 0.35 },
+                    y: { duration: 4.3, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4.3, repeat: Infinity, ease: "easeInOut" },
+                  }}
+                  className={`absolute bottom-10 left-8 z-30 hidden max-w-[10rem] rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:block ${activeHeroTheme.bubbleAccent}`}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{activeHeroCallouts[2].label}</p>
+                  <p className="mt-1 text-sm font-black uppercase leading-tight">{activeHeroCallouts[2].text}</p>
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeHero.id}
+                  src={activeHero.image}
+                  alt={activeHero.name}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="absolute left-1/2 top-16 z-20 h-[285px] w-[220px] -translate-x-1/2 rounded-[2.4rem] object-cover shadow-[0_36px_80px_rgba(0,0,0,0.22)] ring-1 ring-white/70 md:h-[390px] md:w-[300px]"
+                  initial={{ opacity: 0, y: 20, rotate: -2, scale: 0.94 }}
+                  animate={{ opacity: 1, y: [0, -14, 0], rotate: [-2, 1, -2], scale: 1 }}
+                  exit={{ opacity: 0, y: -16, rotate: 2, scale: 0.94 }}
+                  transition={{
+                    opacity: { duration: 0.4 },
+                    scale: { duration: 0.4 },
+                    y: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut" },
+                  }}
+                />
+              </AnimatePresence>
+
+              <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 gap-2">
+                {heroShowcase.map((item, idx) => (
+                  <span
+                    key={item.id}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      idx === activeHeroIndex ? "w-10 bg-[#1f1f1f]" : "w-2 bg-[#1f1f1f]/25"
+                    }`}
+                  />
+                ))}
+              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -268,18 +410,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="rk-reveal border-y border-[#00000012] bg-[#fff2e0] px-4 py-14 md:px-8">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-3xl border border-[#00000012] bg-white p-6">
-            <h2 className="text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Brand Story</h2>
-            <p className="mt-4 text-[#444]">Snacking should be fun, not boring. We kept the wild flavor, removed the greasy drag, and built a snack party you can enjoy guilt-free.</p>
-            <p className="mt-3 text-[#444]">Every SKU is tested for taste first, macro second, vibe always.</p>
-          </div>
-          <div className="rotate-[-2deg] rounded-3xl bg-gradient-to-br from-[#ff7a00] via-[#ff3d81] to-[#8b5cf6] p-[2px]">
-            <div className="rotate-[2deg] rounded-3xl bg-white p-8 text-center text-[#333]">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ff6b00]">Model + Pack Visual</p>
-              <h3 className="mt-3 text-3xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">Snack Party Energy</h3>
-              <p className="mt-2 text-sm">Use your lifestyle/founder image here for the final production site.</p>
+      <section className="rk-reveal relative overflow-hidden bg-[#111111] px-4 py-20 text-white md:px-8">
+        <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ff7a00]/20 blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+        <div className="relative mx-auto max-w-6xl">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm md:p-12">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-4xl">
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-[#ff9d57]">
+                  {featuredTestimonial.kicker}
+                </p>
+                <blockquote className="mt-4 text-4xl font-black uppercase leading-[0.95] text-white [font-family:'Space_Grotesk',sans-serif] md:text-6xl">
+                  "{featuredTestimonial.quote}"
+                </blockquote>
+                <p className="mt-5 max-w-2xl text-sm text-[#cfc2d8] md:text-base">
+                  {featuredTestimonial.subtext}
+                </p>
+              </div>
+
+              <motion.div
+                whileHover={{ rotate: 2, y: -4 }}
+                className="w-fit rotate-[-4deg] rounded-[1.75rem] bg-[#d5ff4f] px-6 py-5 text-[#161616] shadow-[0_18px_50px_rgba(213,255,79,0.2)]"
+              >
+                <p className="text-[10px] font-black uppercase tracking-[0.2em]">Snack verdict</p>
+                <p className="mt-2 max-w-[12rem] text-2xl font-black uppercase leading-none [font-family:'Space_Grotesk',sans-serif]">
+                  {featuredTestimonial.sticker}
+                </p>
+              </motion.div>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-2 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.14em] text-white">{featuredTestimonial.name}</p>
+                <p className="mt-1 text-sm text-[#9f92ac]">{featuredTestimonial.role}</p>
+              </div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ffb77c]">
+                4.9/5 taste rating
+              </p>
             </div>
           </div>
         </div>
@@ -314,7 +482,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="rk-reveal bg-white px-4 py-12 md:px-8">
+      {/* <section className="rk-reveal bg-white px-4 py-12 md:px-8">
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-5 text-center text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">As Seen In</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -323,7 +491,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="rk-reveal bg-[#1a1a1a] px-4 py-16 md:px-8">
         <div className="mx-auto max-w-4xl">
