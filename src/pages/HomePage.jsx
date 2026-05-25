@@ -71,8 +71,8 @@ const heroCollageImages = [
     name: "RoastedKart Hero 1",
     image: hero1Image,
     frameClassName:
-      "left-0 top-24 h-[205px] w-[150px] rotate-[-10deg] md:left-6 md:top-28 md:h-[255px] md:w-[185px]",
-    float: { y: [0, -10, 0], rotate: [-10, -7, -10] },
+      "left-1/2 top-10 z-10 h-[205px] w-[250px] rotate-[-10deg] md:left-0 md:top-25 md:h-[205px] md:w-[285px]",
+    float: { y: [0, -20, 0], rotate: [-10, -7, -10] },
     duration: 4.8,
   },
   {
@@ -80,7 +80,7 @@ const heroCollageImages = [
     name: "RoastedKart Hero 2",
     image: hero2Image,
     frameClassName:
-      "left-1/2 top-12 z-20 h-[285px] w-[220px] -translate-x-1/2 rotate-[-2deg] md:top-14 md:h-[390px] md:w-[300px]",
+      "left-1/2 top-12 z-20 h-[185px] w-[220px] -translate-x-1/2 rotate-[-2deg] md:top-14 md:h-[190px] md:w-[300px]",
     float: { y: [0, -14, 0], rotate: [-2, 1, -2] },
     duration: 4.2,
   },
@@ -89,8 +89,8 @@ const heroCollageImages = [
     name: "RoastedKart Hero 3",
     image: hero3Image,
     frameClassName:
-      "bottom-14 right-1 h-[215px] w-[155px] rotate-[9deg] md:bottom-16 md:right-5 md:h-[265px] md:w-[190px]",
-    float: { y: [0, 10, 0], rotate: [9, 6, 9] },
+      "bottom-1 right-100 h-[215px] w-[255px] rotate-[9deg] md:bottom-16 md:right-25 md:h-[365px] md:w-[290px]",
+    float: { y: [0, 10, 0], rotate: [15, 6, 9] },
     duration: 5,
   },
 ];
