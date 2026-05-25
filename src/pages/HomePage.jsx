@@ -98,28 +98,42 @@ const heroCollageImages = [
 const heroBubbleNotes = [
   {
     id: "bubble-1",
-    label: "Snack Drop",
-    text: "Crunch that looks loud",
-    tone: "bg-[#ff7a00] text-white",
-    className: "left-0 top-8 max-w-[10rem] rotate-[-7deg]",
+    label: "Fan Favourite",
+    title: "Peri Peri Soya Pops",
+    text: "46g protein per 100g. Loud crunch.",
+    highlight: "Hot Pick",
+    tone: "left-0 top-8 bg-[#ff7a00] text-white",
+    className: "max-w-[12rem] rotate-[-7deg]",
     float: { y: [0, -6, 0], rotate: [-7, -4, -7] },
     duration: 3.8,
   },
   {
     id: "bubble-2",
-    label: "Clean Win",
-    text: "No fry. No greasy drag.",
-    tone: "right-0 top-24 hidden bg-white text-[#2a1c22] sm:block",
-    className: "max-w-[10rem] rotate-[6deg]",
+    label: "Millet Box",
+    title: "The Great Indian Millet Box",
+    text: "4 crunchy mixes for everyday snacking.",
+    tone: "right-0 bottom-24 hidden bg-white text-[#2a1c22] sm:block",
+    className: "max-w-[12rem] rotate-[6deg]",
     float: { y: [0, 6, 0], rotate: [6, 3, 6] },
     duration: 4.1,
   },
   {
     id: "bubble-3",
-    label: "Desk Stash",
-    text: "Always gone too fast",
+    label: "Trail Pack",
+    title: "All-in-One Snack Box",
+    text: "All 8 flavours in one drop.",
     tone: "bottom-10 left-8 hidden bg-[#ffd26f] text-[#3a2400] sm:block",
-    className: "max-w-[10rem] rotate-[-5deg]",
+    className: "max-w-[12rem] rotate-[-5deg]",
+    float: { y: [0, 7, 0], rotate: [-5, -2, -5] },
+    duration: 4.3,
+  },
+  {
+    id: "bubble-4",
+    label: "Protein Box",
+    title: "Rice Bran Oil. No Maida.",
+    text: "Clean soya pops without boring energy.",
+    tone: "bottom-15 right-8 hidden bg-[#ff8fab] text-[#3a2400] sm:block",
+    className: "max-w-[12rem] rotate-[-5deg]",
     float: { y: [0, 7, 0], rotate: [-5, -2, -5] },
     duration: 4.3,
   },
@@ -226,8 +240,18 @@ export default function HomePage() {
                   transition={{ opacity: { duration: 0.45 }, y: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" }, rotate: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" } }}
                   className={`absolute z-30 rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${bubble.className} ${bubble.tone}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{bubble.label}</p>
-                  <p className="mt-1 text-sm font-black uppercase leading-tight">{bubble.text}</p>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{bubble.label}</p>
+                    {bubble.highlight ? (
+                      <span className="rounded-full bg-white/20 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
+                        {bubble.highlight}
+                      </span>
+                    ) : null}
+                  </div>
+                  {bubble.title ? (
+                    <p className="mt-1 text-sm font-black uppercase leading-tight">{bubble.title}</p>
+                  ) : null}
+                  <p className="mt-1 text-[11px] font-semibold leading-snug opacity-90">{bubble.text}</p>
                 </motion.div>
               ))}
 

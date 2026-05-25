@@ -32,6 +32,9 @@ export default function AboutPage() {
             We created RoastedKart for people who love bold snack culture but want cleaner choices. No bland health
             tone, no boring flavor.
           </p>
+          <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-[#8b4b00]">
+            A Brand of Your Diet Factory
+          </p>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">

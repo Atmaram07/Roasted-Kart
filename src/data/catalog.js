@@ -51,7 +51,7 @@ export const products = [
     heroColor: "from-orange-500 via-rose-500 to-fuchsia-500",
     benefits: ["High protein", "Roasted not fried", "No palm oil", "No maida"],
     ingredients:
-      "Soya grits, chickpea flour, rice flour, seasoning blend, spices, sea salt, sunflower oil (light coating).",
+      "Soya grits, chickpea flour, rice flour, seasoning blend, spices, sea salt, rice bran oil (light coating).",
     nutrition: { serving: "30 g", protein: "33 - 36g", calories: "182 kcal", fat: "6g", carbs: "13g" },
     reviews: [
       "Peri Peri is dangerously addictive. I keep ordering weekly.",
@@ -85,7 +85,7 @@ export const products = [
     heroColor: "from-lime-400 via-emerald-500 to-cyan-500",
     benefits: ["All 8 flavours", "Roasted not fried", "No palm oil", "Perfect for sharing"],
     ingredients:
-      "Mixed snack blends including millets, soya pops, roasted nuts, seasoning blends, and light sunflower oil.",
+      "Mixed snack blends including millets, soya pops, roasted nuts, seasoning blends, and light rice bran oil.",
     nutrition: { serving: "40 g", protein: "25-30g", calories: "250 kcal", fat: "8g", carbs: "28g" },
     reviews: [
       "The trail pack is perfect for trying everything at once.",

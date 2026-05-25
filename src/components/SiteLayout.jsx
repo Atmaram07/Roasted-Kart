@@ -21,8 +21,11 @@ export default function SiteLayout() {
 
       <nav className="sticky top-0 z-50 border-b border-[#00000014] bg-[#fff8ef]/92 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
-          <NavLink to="/" className="flex items-center">
-            <img src={logoImg} alt="RoastedKart" className="h-20 w-auto object-contain" />
+          <NavLink to="/" className="flex items-center gap-3">
+            <img src={logoImg} alt="RoastedKart" className="h-14 md:h-24 lg:h-28 w-auto object-contain" />
+            <span className="text-lg md:text-2xl lg:text-3xl font-black tracking-wide text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">
+              RoastedKart
+            </span>
           </NavLink>
 
           <button
@@ -87,12 +90,16 @@ export default function SiteLayout() {
       </main>
 
       <footer className="mt-12 border-t border-[#00000012] bg-[#fff2e0] px-4 py-10 text-[#3a3a3a] md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
             <NavLink to="/">
-              <img src={logoImg} alt="RoastedKart" className="h-16 w-auto object-contain" />
+              <img src={logoImg} alt="RoastedKart" className="h-12 md:h-20 lg:h-24 w-auto object-contain" />
             </NavLink>
-            <p className="mt-2 text-sm text-[#5a5a5a]">Snack party energy with cleaner crunch macros.</p>
+            <div>
+              <NavLink to="/" className="text-base md:text-lg lg:text-xl font-black text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">RoastedKart</NavLink>
+              <p className="mt-1 text-sm text-[#5a5a5a]">Snack party energy with cleaner crunch macros.</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#8b4b00]">A Brand of Your Diet Factory</p>
+            </div>
           </div>
           <div className="flex gap-5 text-xs font-black uppercase tracking-[0.12em] text-[#2b2b2b]">
             <NavLink to="/shop" className="hover:text-[#ff6b00]">Shop</NavLink>

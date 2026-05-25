@@ -14,6 +14,9 @@ export default function ContactPage() {
           <p className="mx-auto mt-4 max-w-2xl text-[#4d4d4d]">
             Collaborations, retail onboarding, bulk orders, media features, or just snack love.
           </p>
+          <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-[#8b4b00]">
+            A Brand of Your Diet Factory
+          </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-[1.1fr_0.9fr]">
