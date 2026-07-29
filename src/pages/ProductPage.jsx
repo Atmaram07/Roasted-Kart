@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import { getProductBySlug, getVariantBySlug } from "../data/catalog";
 
 const TABS = ["Benefits", "Ingredients", "Nutrition", "Reviews"];
@@ -14,9 +15,11 @@ const WhatsAppIcon = () => (
 export default function ProductPage() {
   const { variantSlug } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [selectedVariantSlug, setSelectedVariantSlug] = useState(variantSlug);
   const [activeTab, setActiveTab] = useState("Benefits");
+  const [quantity, setQuantity] = useState(1);
 
   const variant = useMemo(() => getVariantBySlug(selectedVariantSlug), [selectedVariantSlug]);
   const product = useMemo(() => (variant ? getProductBySlug(variant.productSlug) : null), [variant]);
@@ -137,35 +140,94 @@ export default function ProductPage() {
             </div>
 
             {/* Price block */}
-            <div className="rounded-2xl border border-[#00000010] bg-white p-5">
-              <span className="text-4xl font-black text-[#1f1f1f]">₹{variant.price}</span>
-              <p className="mt-1 text-xs text-[#aaa]">Inclusive of all taxes · Free delivery above ₹499</p>
+            <div className="rounded-2xl border border-[#00000010] bg-white p-5 space-y-4">
+              <div>
+                <span className="text-4xl font-black text-[#1f1f1f]">₹{variant.price}</span>
+                <p className="mt-1 text-xs text-[#aaa]">Inclusive of all taxes · Free delivery above ₹499</p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                  <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">Net Weight</p>
+                  <p className="mt-2">{variant.netWeight || variant.weight}</p>
+                </div>
+                <div className="rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                  <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">Shelf life</p>
+                  <p className="mt-2">{product.shelfLife}</p>
+                </div>
+                <div className="rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                  <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">Storage</p>
+                  <p className="mt-2">{product.storage}</p>
+                </div>
+                <div className="rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                  <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">Manufacturer</p>
+                  <p className="mt-2">{product.manufacturer}</p>
+                </div>
+                {product.fssai && (
+                  <div className="sm:col-span-2 rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                    <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">FSSAI</p>
+                    <p className="mt-2">{product.fssai}</p>
+                  </div>
+                )}
+                {product.allergenInfo && (
+                  <div className="sm:col-span-2 rounded-2xl bg-[#fff8ef] p-4 text-sm text-[#444]">
+                    <p className="font-black uppercase tracking-[0.14em] text-[#1f1f1f]">Allergen Information</p>
+                    <p className="mt-2">{product.allergenInfo}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
-      
-
-            {/* CTA Buttons */}
+            {/* Quantity selector */}
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 rounded-full border border-[#00000010] bg-white px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((qty) => Math.max(1, qty - 1))}
+                  className="h-10 w-10 rounded-full bg-[#f3f0ec] text-lg font-black text-[#1f1f1f]"
+                >
+                  −
+                </button>
+                <span className="min-w-[2rem] text-center text-sm font-black">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((qty) => qty + 1)}
+                  className="h-10 w-10 rounded-full bg-[#f3f0ec] text-lg font-black text-[#1f1f1f]"
+                >
+                  +
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => addToCart(variant, quantity)}
+                className="rounded-full bg-[#1f1f1f] px-6 py-4 text-sm font-black uppercase tracking-wide text-white transition hover:bg-[#ff6b00]"
+              >
+                Add {quantity} to Cart
+              </button>
+            </div>
             <div className="flex flex-col gap-3">
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => {
+                    addToCart(variant, quantity);
+                    navigate('/cart');
+                  }}
+                  className="flex-1 rounded-full border border-[#1f1f1f] bg-white px-6 py-4 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:bg-[#ff6b00] hover:text-white"
+                >
+                  Buy on Website
+                </button>
                 <a
                   href={variant.amazon}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(255,107,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(255,107,0,0.45)]"
+                  className="flex-1 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(255,107,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(255,107,0,0.45)]"
                 >
                   <span>🛒</span> Buy on Amazon
                 </a>
-                {/* <a
-                  href={variant.flipkart}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[#1f1f1f] bg-white py-4 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:bg-[#1f1f1f] hover:text-white"
-                >
-                  Buy on Flipkart
-                </a> */}
               </div>
               <a
-                href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}
+                href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(quantity + ' x ' + product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-full bg-[#25d366] py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_6px_18px_rgba(37,211,102,0.3)] transition hover:shadow-[0_10px_26px_rgba(37,211,102,0.45)]"

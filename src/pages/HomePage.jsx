@@ -65,84 +65,18 @@ const featuredTestimonial = {
   sticker: "Repeat ordered in 48 hrs",
 };
 
-const heroCollageImages = [
-  {
-    id: "hero-1",
-    name: "RoastedKart Hero 1",
-    image: hero1Image,
-    frameClassName:
-      "left-1/2 top-10 z-10 h-[205px] w-[250px] rotate-[-10deg] md:left-0 md:top-25 md:h-[205px] md:w-[285px]",
-    float: { y: [0, -20, 0], rotate: [-10, -7, -10] },
-    duration: 4.8,
-  },
-  {
-    id: "hero-2",
-    name: "RoastedKart Hero 2",
-    image: hero2Image,
-    frameClassName:
-      "left-1/2 top-12 z-20 h-[185px] w-[220px] -translate-x-1/2 rotate-[-2deg] md:top-14 md:h-[190px] md:w-[300px]",
-    float: { y: [0, -14, 0], rotate: [-2, 1, -2] },
-    duration: 4.2,
-  },
-  {
-    id: "hero-3",
-    name: "RoastedKart Hero 3",
-    image: hero3Image,
-    frameClassName:
-      "bottom-1 right-100 h-[215px] w-[255px] rotate-[9deg] md:bottom-16 md:right-25 md:h-[365px] md:w-[290px]",
-    float: { y: [0, 10, 0], rotate: [15, 6, 9] },
-    duration: 5,
-  },
-];
-
-const heroBubbleNotes = [
-  {
-    id: "bubble-1",
-    label: "Fan Favourite",
-    title: "Peri Peri Soya Pops",
-    text: "46g protein per 100g. Loud crunch.",
-    highlight: "Hot Pick",
-    tone: "left-0 top-8 bg-[#ff7a00] text-white",
-    className: "max-w-[12rem] rotate-[-7deg]",
-    float: { y: [0, -6, 0], rotate: [-7, -4, -7] },
-    duration: 3.8,
-  },
-  {
-    id: "bubble-2",
-    label: "Millet Box",
-    title: "The Great Indian Millet Box",
-    text: "4 crunchy mixes for everyday snacking.",
-    tone: "right-0 bottom-24 hidden bg-white text-[#2a1c22] sm:block",
-    className: "max-w-[12rem] rotate-[6deg]",
-    float: { y: [0, 6, 0], rotate: [6, 3, 6] },
-    duration: 4.1,
-  },
-  {
-    id: "bubble-3",
-    label: "Trail Pack",
-    title: "All-in-One Snack Box",
-    text: "All 8 flavours in one drop.",
-    tone: "bottom-10 left-8 hidden bg-[#ffd26f] text-[#3a2400] sm:block",
-    className: "max-w-[12rem] rotate-[-5deg]",
-    float: { y: [0, 7, 0], rotate: [-5, -2, -5] },
-    duration: 4.3,
-  },
-  {
-    id: "bubble-4",
-    label: "Protein Box",
-    title: "Rice Bran Oil. No Maida.",
-    text: "Clean soya pops without boring energy.",
-    tone: "bottom-15 right-8 hidden bg-[#ff8fab] text-[#3a2400] sm:block",
-    className: "max-w-[12rem] rotate-[-5deg]",
-    float: { y: [0, 7, 0], rotate: [-5, -2, -5] },
-    duration: 4.3,
-  },
+const heroFeatures = [
+  { label: "High Protein", value: "24g per pack" },
+  { label: "Roasted, Not Fried", value: "Zero palm oil" },
+  { label: "Made for India", value: "Crunchy, wholesome, clean" },
 ];
 
 export default function HomePage() {
   const [email, setEmail] = useState("");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const testimonialTimer = useRef(null);
+  const comboProduct = products.find((product) => product.id === "soya-pops-combo");
+  const comboVariant = comboProduct?.variants[0];
 
   const startTestimonialTimer = useCallback(() => {
     testimonialTimer.current = setInterval(() => {
@@ -209,87 +143,29 @@ export default function HomePage() {
               <span className="rounded-full bg-[#d5ff4f] px-4 py-2 text-xs font-black uppercase tracking-wide text-[#1a2b00]">Snack Loud</span>
             </div>
 
-            <div className="rk-hero-reveal mt-8 flex flex-wrap gap-3">
-              <Link to="/shop" className="rounded-full bg-gradient-to-r from-[#ff7a00] via-[#ff3d81] to-[#8b5cf6] px-7 py-3 text-sm font-black uppercase tracking-wide text-white shadow-[0_12px_30px_rgba(255,61,129,0.3)]">
-                Grab The Crunch
-              </Link>
-              <a href="#where-to-buy" className="rounded-full border border-[#00000020] bg-white px-7 py-3 text-sm font-black uppercase tracking-wide text-[#2b2b2b]">
-                Where To Buy
-              </a>
+
+            
+
+            <div className="rk-hero-reveal mt-6 grid gap-3 sm:grid-cols-3">
+              {[
+                { title: "Freshly Roasted", text: "Small-batch roasted daily, no stale stock." },
+                { title: "Quality Assured", text: "Lab-tested ingredients, 0 preservatives." },
+                { title: "India-wide Delivery", text: "Fast shipments across all major cities." },
+              ].map((item) => (
+                <div key={item.title} className="rounded-[1.75rem] border border-[#ffe4c2] bg-white/95 p-5 shadow-[0_18px_40px_rgba(255,133,46,0.12)]">
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#ff8c00]">{item.title}</p>
+                  <p className="mt-3 text-sm text-[#4a4a4a]">{item.text}</p>
+                </div>
+              ))}
             </div>
+
+           
           </div>
 
-          <motion.div className="relative" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <motion.div
-              className="relative mb-6 h-[380px] md:h-[500px]"
-              initial={{ scale: 0.98 }}
-              animate={{ scale: [0.98, 1, 0.98] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <div className="absolute left-1/2 top-12 h-80 w-80 -translate-x-1/2 rounded-full bg-gradient-to-br from-[#ffcd94]/55 via-[#ff7a00]/22 to-transparent blur-3xl" />
-              <div className="absolute left-5 top-28 h-24 w-24 rounded-full border border-white/45 bg-white/25 backdrop-blur-sm md:left-14 md:h-28 md:w-28" />
-              <div className="absolute right-3 top-16 h-16 w-16 rounded-full border border-black/5 bg-[#d5ff4f]/40 backdrop-blur-sm md:right-14 md:h-20 md:w-20" />
-              <div className="absolute bottom-16 right-8 h-20 w-20 rounded-full border border-white/40 bg-white/18 backdrop-blur-sm md:h-24 md:w-24" />
-              <div className="absolute bottom-8 left-12 hidden h-14 w-14 rounded-full border border-[#ff7a00]/20 bg-[#ff7a00]/10 backdrop-blur-sm md:block" />
-
-              {heroBubbleNotes.map((bubble) => (
-                <motion.div
-                  key={bubble.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: bubble.float.y, rotate: bubble.float.rotate }}
-                  transition={{ opacity: { duration: 0.45 }, y: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" }, rotate: { duration: bubble.duration, repeat: Infinity, ease: "easeInOut" } }}
-                  className={`absolute z-30 rounded-[1.25rem] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${bubble.className} ${bubble.tone}`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] opacity-75">{bubble.label}</p>
-                    {bubble.highlight ? (
-                      <span className="rounded-full bg-white/20 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
-                        {bubble.highlight}
-                      </span>
-                    ) : null}
-                  </div>
-                  {bubble.title ? (
-                    <p className="mt-1 text-sm font-black uppercase leading-tight">{bubble.title}</p>
-                  ) : null}
-                  <p className="mt-1 text-[11px] font-semibold leading-snug opacity-90">{bubble.text}</p>
-                </motion.div>
-              ))}
-
-              {heroCollageImages.map((item) => (
-                <motion.img
-                  key={item.id}
-                  src={item.image}
-                  alt={item.name}
-                  loading="eager"
-                  decoding="async"
-                  className={`absolute rounded-[2.2rem] object-cover shadow-[0_30px_70px_rgba(0,0,0,0.2)] ring-1 ring-white/70 ${item.frameClassName}`}
-                  initial={{ opacity: 0, y: 18, scale: 0.95 }}
-                  animate={{ opacity: 1, y: item.float.y, rotate: item.float.rotate, scale: 1 }}
-                  transition={{
-                    opacity: { duration: 0.5, delay: item.id === "hero-2" ? 0.1 : 0.2 },
-                    scale: { duration: 0.5, delay: item.id === "hero-2" ? 0.1 : 0.2 },
-                    y: { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: item.duration, repeat: Infinity, ease: "easeInOut" },
-                  }}
-                />
-              ))}
-            </motion.div>
-          </motion.div>
         </div>
       </section>
 
-      <section id="where-to-buy" className="rk-reveal border-y border-[#00000012] bg-white px-4 py-10 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Where To Buy</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {partners.map((partner) => (
-              <motion.div key={partner} whileHover={{ y: -4 }} className="rounded-2xl border border-[#00000012] bg-[#fff8ef] p-5 text-center">
-                <p className="text-lg font-black uppercase tracking-wide text-[#ff6b00]">{partner}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       <section className="rk-reveal bg-[#fff8ef] px-4 py-14 md:px-8">
         <div className="mx-auto max-w-7xl">
@@ -309,6 +185,60 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {comboProduct && (
+        <section className="rk-reveal bg-[#1a1a1a] px-4 py-14 text-white md:px-8">
+          <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#ffffff15] bg-[#111111]/90 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+            <div className="grid gap-10 lg:grid-cols-[0.95fr_0.9fr] lg:items-center">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-[#ff8c00]">Featured Combo</p>
+                <h2 className="mt-3 text-5xl font-black uppercase leading-tight [font-family:'Space_Grotesk',sans-serif]">
+                  {comboProduct.name}
+                </h2>
+                <p className="mt-5 max-w-xl text-sm leading-7 text-[#d9d9d9]">
+                  {comboProduct.longDescription}
+                </p>
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-3xl bg-[#111111] p-5 ring-1 ring-white/10">
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-[#ffb347]">Pack</p>
+                    <p className="mt-3 text-xl font-black text-white">{comboVariant.weight}</p>
+                  </div>
+                  <div className="rounded-3xl bg-[#111111] p-5 ring-1 ring-white/10">
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-[#ffb347]">Best Value</p>
+                    <p className="mt-3 text-xl font-black text-white">₹{comboVariant.price}</p>
+                  </div>
+                </div>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <a
+                    href={comboVariant.amazon}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full bg-[#ff7a00] px-6 py-3 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:bg-[#ff9b49]"
+                  >
+                    Buy on Amazon
+                  </a>
+                  <Link
+                    to="/shop"
+                    className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:border-[#ff7a00] hover:text-[#ff7a00]"
+                  >
+                    See full shop
+                  </Link>
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-[2rem] bg-[#141414] p-6">
+                <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#ff7a00]/20 to-transparent" />
+                <img src={comboProduct.image} alt={comboProduct.name} className="mx-auto h-72 w-full max-w-[420px] object-contain" />
+                <div className="mt-6 grid grid-cols-3 gap-3 text-center text-xs font-black uppercase text-[#d9d9d9]">
+                  {comboVariant.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="rounded-2xl bg-white/5 px-3 py-2">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="rk-reveal bg-[#ff6b00] px-4 py-6 md:px-8">
         <div className="mx-auto max-w-7xl">
@@ -415,16 +345,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* <section className="rk-reveal bg-white px-4 py-14 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Watch The Crunch Story</h2>
-          <div className="mt-7 overflow-hidden rounded-3xl border border-[#00000014] bg-black shadow-[0_20px_40px_rgba(0,0,0,0.2)]">
-            <div className="relative w-full pt-[56.25%]">
-              <iframe className="absolute inset-0 h-full w-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="RoastedKart Brand Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
-            </div>
-          </div>
-        </div>
-      </section> */}
+      
 
       <section className="rk-reveal border-y border-[#00000012] bg-[#fff8ef] px-4 py-14 md:px-8">
         <div className="mx-auto max-w-7xl">

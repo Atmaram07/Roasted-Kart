@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import logoImg from "../assets/Roasted Kart Logo.png";
 import { storeLinks } from "../data/catalog";
 
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/shop", label: "Shop" },
+  { to: "/build-your-own", label: "Build Your Own" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
 
 export default function SiteLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { count } = useCart();
 
   return (
     <div className="min-h-screen bg-[#fff8ef] text-[#202020]">
@@ -52,7 +55,16 @@ export default function SiteLayout() {
                 {item.label}
               </NavLink>
             ))}
-
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                `rounded-full border border-[#0000001f] px-3 py-2 text-[11px] tracking-wide ${
+                  isActive ? "bg-[#ff6b00] text-white" : "text-[#2b2b2b]"
+                }`
+              }
+            >
+              Cart{count > 0 ? ` (${count})` : ""}
+            </NavLink>
             <a href={storeLinks.amazon} target="_blank" rel="noopener noreferrer" className="rounded-full bg-[#ff6b00] px-3 py-2 text-[11px] tracking-wide text-white shadow-[0_8px_24px_rgba(255,107,0,0.28)]">
               Amazon
             </a>
@@ -73,6 +85,17 @@ export default function SiteLayout() {
                 {item.label}
               </NavLink>
             ))}
+            <NavLink
+              to="/cart"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block rounded-2xl px-4 py-3 text-center text-[11px] font-black uppercase tracking-wide transition ${
+                  isActive ? "bg-[#ff6b00] text-white" : "bg-white text-[#2b2b2b] hover:bg-[#fff0e4]"
+                }`
+              }
+            >
+              Cart{count > 0 ? ` (${count})` : ""}
+            </NavLink>
             <a
               href={storeLinks.amazon}
               target="_blank"
@@ -89,24 +112,132 @@ export default function SiteLayout() {
         <Outlet />
       </main>
 
-      <footer className="mt-12 border-t border-[#00000012] bg-[#fff2e0] px-4 py-10 text-[#3a3a3a] md:px-8">
-          <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <NavLink to="/">
-              <img src={logoImg} alt="RoastedKart" className="h-12 md:h-20 lg:h-24 w-auto object-contain" />
-            </NavLink>
-            <div>
-              <NavLink to="/" className="text-base md:text-lg lg:text-xl font-black text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">RoastedKart</NavLink>
-              <p className="mt-1 text-sm text-[#5a5a5a]">Snack party energy with cleaner crunch macros.</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#8b4b00]">A Brand of Your Diet Factory</p>
+      <footer className="mt-12 border-t border-[#00000012] bg-[#fff6ed] px-4 py-16 text-[#2f2f2f] md:px-8">
+        <div className="mx-auto max-w-7xl space-y-10">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(255,140,42,0.1)]">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Roasted Goodness</p>
+              <p className="mt-3 text-sm leading-7 text-[#555]">Made with real roasted spices and premium ingredients for better crunch, better energy, and better taste.</p>
+            </div>
+            <div className="rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(115,163,48,0.08)]">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Fast shipping</p>
+              <p className="mt-3 text-sm leading-7 text-[#555]">Free shipping on ₹999+ orders and express dispatch for every snack bundle.</p>
+            </div>
+            <div className="rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(62,124,196,0.08)]">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Quality assured</p>
+              <p className="mt-3 text-sm leading-7 text-[#555]">FSSAI certified, batch-tested, and crafted in hygienic kitchens for safe snacking.</p>
+            </div>
+            <div className="rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(37,211,102,0.08)]">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Secure checkout</p>
+              <p className="mt-3 text-sm leading-7 text-[#555]">SSL secure, trusted payment partners, and simple returns when you need them.</p>
             </div>
           </div>
-          <div className="flex gap-5 text-xs font-black uppercase tracking-[0.12em] text-[#2b2b2b]">
-            <NavLink to="/shop" className="hover:text-[#ff6b00]">Shop</NavLink>
-            <NavLink to="/about" className="hover:text-[#ff6b00]">About</NavLink>
-            <NavLink to="/contact" className="hover:text-[#ff6b00]">Contact</NavLink>
+
+          <div className="rounded-[2rem] border border-[#ffe6d4] bg-white p-8 shadow-[0_30px_90px_rgba(255,151,45,0.1)]">
+            <div className="grid gap-10 xl:grid-cols-[1.8fr_1fr_1fr_1fr]">
+              <div className="space-y-5">
+                <div className="flex items-start gap-3">
+                  <NavLink to="/">
+                    <img src={logoImg} alt="RoastedKart" className="h-16 w-auto object-contain" />
+                  </NavLink>
+                  <div>
+                    <NavLink to="/" className="text-xl font-black text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">RoastedKart</NavLink>
+                    <p className="mt-1 text-sm text-[#5a5a5a]">Crunchy, clean, and crafted for every snack moment.</p>
+                  </div>
+                </div>
+                <p className="max-w-md text-sm leading-7 text-[#4d4d4d]">
+                  Direct-to-door flavour packs, nutritional balance, and reliable service for customers who shop snacks with purpose.
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-3xl border border-[#ffe8d8] bg-[#fff8f2] p-4 text-sm text-[#5f3e15]">
+                    <p className="font-black uppercase tracking-[0.16em] text-[#a56b30]">GSTIN</p>
+                    <p className="mt-2">08AFWPA0107K2ZH</p>
+                  </div>
+                  <div className="rounded-3xl border border-[#f9e2c8] bg-[#fff5e8] p-4 text-sm text-[#5f3e15]">
+                    <p className="font-black uppercase tracking-[0.16em] text-[#a56b30]">FSSAI</p>
+                    <p className="mt-2">12226026000420</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Shop</h3>
+                <div className="flex flex-col gap-3 text-sm text-[#4a4a4a]">
+                  <NavLink to="/shop" className="transition hover:text-[#ff6b00]">Shop All</NavLink>
+                  <NavLink to="/shop#best-sellers" className="transition hover:text-[#ff6b00]">Best Sellers</NavLink>
+                  <NavLink to="/shop#new-arrivals" className="transition hover:text-[#ff6b00]">New Arrivals</NavLink>
+                  <NavLink to="/shop#gift-sets" className="transition hover:text-[#ff6b00]">Gifting</NavLink>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Policies</h3>
+                <div className="flex flex-col gap-3 text-sm text-[#4a4a4a]">
+                  <NavLink to="/privacy-policy" className="transition hover:text-[#ff6b00]">Privacy Policy</NavLink>
+                  <NavLink to="/terms-conditions" className="transition hover:text-[#ff6b00]">Terms & Conditions</NavLink>
+                  <NavLink to="/refund-cancellation-policy" className="transition hover:text-[#ff6b00]">Refund Policy</NavLink>
+                  <NavLink to="/shipping-delivery-policy" className="transition hover:text-[#ff6b00]">Shipping Policy</NavLink>
+                  <NavLink to="/faq" className="transition hover:text-[#ff6b00]">FAQs</NavLink>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Connect</h3>
+                <div className="rounded-3xl border border-[#fff1df] bg-[#fff7f0] p-5 text-sm text-[#4d4d4d] shadow-sm">
+                  <p className="font-black uppercase tracking-[0.16em] text-[#2b2b2b]">Customer care</p>
+                  <p className="mt-3">Email <a href="mailto:dietfactoryindia@gmail.com" className="text-[#ff6b00]">dietfactoryindia@gmail.com</a></p>
+                  <p>Phone <a href="tel:+917425049203" className="text-[#ff6b00]">+91 74250 49203</a></p>
+                  <p className="mt-4 font-black uppercase tracking-[0.16em] text-[#2b2b2b]">Follow</p>
+                  <div className="mt-2 flex flex-col gap-2 text-sm text-[#4a4a4a]">
+                    <a href="https://www.instagram.com/roastedkart" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#ff6b00]">Instagram</a>
+                  
+                    <a href="https://www.linkedin.com/company/roastedkart" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#ff6b00]">LinkedIn</a>
+                  </div>
+                </div>
+                <div className="rounded-3xl border border-[#f2dcc1] bg-[#fff4e8] p-5 text-sm text-[#4a4a4a] shadow-sm">
+                  <p className="font-black uppercase tracking-[0.16em] text-[#2b2b2b]">Support</p>
+                  <p className="mt-3 text-sm leading-6">Quick help and order updates through WhatsApp or email from 10am–6pm, Mon–Sat.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-[#6d6d6d]">Copyright 2026 RoastedKart.</p>
+
+          <div className="rounded-[1.75rem] border border-[#ffe4cf] bg-[#fff6f0] p-6 shadow-[0_30px_80px_rgba(255,156,36,0.08)]">
+            <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+              <div className="space-y-4">
+                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2b2b2b]">Trusted by thousands</p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-3xl border border-[#ffe7d9] bg-[#fff5ec] p-4 text-center">
+                    <p className="text-2xl font-black text-[#ff6b00]">10K+</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#896032]">Happy customers</p>
+                  </div>
+                  <div className="rounded-3xl border border-[#e9f2d4] bg-[#f6fbef] p-4 text-center">
+                    <p className="text-2xl font-black text-[#5c8c26]">4.9/5</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#6f8145]">Average rating</p>
+                  </div>
+                  <div className="rounded-3xl border border-[#dde7fc] bg-[#eef5ff] p-4 text-center">
+                    <p className="text-2xl font-black text-[#1f5fa2]">Fast</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#4c5f82]">Delivery & support</p>
+                  </div>
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-3xl border border-[#f8dfca] bg-[#fff3e7] p-4 text-center text-sm text-[#4f3c23]">
+                  <p className="font-black uppercase tracking-[0.16em]">Payment partners</p>
+                  <p className="mt-3">UPI, Card, Netbanking, Wallets</p>
+                </div>
+                <div className="rounded-3xl border border-[#e8ebf2] bg-[#f6f9ff] p-4 text-center text-sm text-[#3f4f6f]">
+                  <p className="font-black uppercase tracking-[0.16em]">Certified quality</p>
+                  <p className="mt-3">FSSAI approved | Hygienic processing</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 border-t border-[#ffe3d0] pt-4 text-xs text-[#6d6d6d] sm:flex-row sm:items-center sm:justify-between">
+            <p>Copyright 2026 RoastedKart. All rights reserved.</p>
+            <p className="uppercase tracking-[0.14em] text-[#9a763e]">A Brand of Your Diet Factory</p>
+          </div>
         </div>
       </footer>
       {/* Floating WhatsApp Button */}

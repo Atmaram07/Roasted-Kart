@@ -1,17 +1,27 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import { products } from "../data/catalog";
 
 export default function ShopPage() {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const categories = useMemo(() => ["All", ...products.map((p) => p.category)], []);
 
-  const visibleProducts = useMemo(() =>
-    products.filter((p) => categoryFilter === "All" || p.category === categoryFilter),
-    [categoryFilter]
-  );
+  const visibleProducts = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return products.filter((p) => {
+      const categoryMatch = categoryFilter === "All" || p.category === categoryFilter;
+      const searchMatch =
+        !search ||
+        [p.name, p.shortDescription, p.category].join(" ").toLowerCase().includes(search);
+      return categoryMatch && searchMatch;
+    });
+  }, [categoryFilter, searchTerm]);
 
   return (
     <div className="min-h-screen bg-[#fff8ef]">
@@ -75,24 +85,33 @@ export default function ShopPage() {
 
       {/* ── Filter Bar ── */}
       <div className="sticky top-[72px] z-30 border-b border-[#00000010] bg-[#fff8ef]/95 px-4 py-3 backdrop-blur-md md:px-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <div className="mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-xs font-black uppercase tracking-[0.14em] text-[#888]">
             {visibleProducts.length} product{visibleProducts.length !== 1 ? "s" : ""}
           </p>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategoryFilter(cat)}
-                className={`rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wide transition ${
-                  categoryFilter === cat
-                    ? "bg-[#1f1f1f] text-white shadow-md"
-                    : "border border-[#00000015] bg-white text-[#555] hover:border-[#ff6b00]/40 hover:text-[#ff6b00]"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search snacks, flavours, categories..."
+              className="w-full min-w-[220px] rounded-full border border-[#00000015] bg-white px-4 py-2 text-sm text-[#444] outline-none transition focus:border-[#ff6b00] focus:ring-2 focus:ring-[#ffbe80]/30"
+            />
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategoryFilter(cat)}
+                  className={`rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wide transition ${
+                    categoryFilter === cat
+                      ? "bg-[#1f1f1f] text-white shadow-md"
+                      : "border border-[#00000015] bg-white text-[#555] hover:border-[#ff6b00]/40 hover:text-[#ff6b00]"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -198,14 +217,24 @@ export default function ShopPage() {
                       </div>
 
                       {/* Quick buy row — visible on hover */}
-                      <div className="mt-3 grid grid-cols-2 gap-2 overflow-hidden transition-all duration-300 max-h-0 group-hover:max-h-16">
+                      <div className="mt-3 grid grid-cols-1 gap-2 overflow-hidden transition-all duration-300 max-h-0 group-hover:max-h-48 sm:grid-cols-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            addToCart(variant, 1);
+                            navigate('/cart');
+                          }}
+                          className="flex items-center justify-center gap-1.5 rounded-full bg-[#1f1f1f] py-2 text-[10px] font-black uppercase tracking-wide text-white"
+                        >
+                          🛒 Buy on Website
+                        </button>
                         <a
                           href={variant.amazon}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-1.5 rounded-full bg-[#ff7a00] py-2 text-[10px] font-black uppercase tracking-wide text-white"
                         >
-                          🛒 Amazon
+                          Amazon
                         </a>
                         <a
                           href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}

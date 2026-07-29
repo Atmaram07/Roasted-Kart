@@ -2,16 +2,16 @@ import { motion } from "framer-motion";
 
 const values = [
   {
-    title: "Flavor Is Non-Negotiable",
-    line: "If a snack does not make you smile, it does not make the shelf. We build around taste first.",
+    title: "Mission",
+    line: "To make bold, healthier snacking accessible across India without compromising on taste.",
   },
   {
-    title: "Healthy But Never Boring",
-    line: "Clean labels and smart macros without sterile wellness-brand vibes.",
+    title: "Quality First",
+    line: "We roast with care, use clean ingredients, and never settle for anything less than a crunchy delight.",
   },
   {
-    title: "Culture-Led Snacking",
-    line: "We remix Indian snack nostalgia for modern, playful energy.",
+    title: "Snack Smarter",
+    line: "We believe healthy snacks should feel exciting, not clinical.",
   },
 ];
 
@@ -27,10 +27,9 @@ export default function AboutPage() {
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="rounded-3xl border border-[#00000012] bg-gradient-to-br from-[#ffe9d1] to-[#fff8ef] p-8 text-center">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6b00]">About RoastedKart</p>
-          <h1 className="mt-2 text-5xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Snack Party With A Purpose</h1>
+          <h1 className="mt-2 text-5xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">The story behind the crunch.</h1>
           <p className="mx-auto mt-4 max-w-3xl text-[#4d4d4d]">
-            We created RoastedKart for people who love bold snack culture but want cleaner choices. No bland health
-            tone, no boring flavor.
+            RoastedKart started as a search for better snack choices: bolder taste, cleaner ingredients, and real snack joy.
           </p>
           <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-[#8b4b00]">
             A Brand of Your Diet Factory
@@ -50,55 +49,51 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <div className="rounded-3xl border border-[#00000012] bg-white p-7">
-          <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Founder Story</h2>
-          <div className="mt-4 space-y-4 text-[#555]">
-            <h3 className="text-xl font-black">The Heart Behind the Crunch</h3>
+        <div className="rounded-3xl border border-[#00000012] bg-white p-7 space-y-6 text-[#555]">
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Brand story</h2>
             <p>
-              It began with a mother turning over a snack packet in a grocery aisle, searching for something she
-              could trust. Instead, she found a list of compromises: palm oil, heavy preservatives, and synthetic
-              flavours. Like any parent, she wanted better for her family. But looking around, she realized a
-              frustrating truth—the modern snack industry had sacrificed long-term health for short-term taste.
+              RoastedKart was born from a simple frustration: modern snacks were either too indulgent or too bland. We wanted something that delivered both bold flavour and mindful ingredients.
             </p>
             <p>
-              She refused to accept that compromise. If a truly honest, delicious snack didn't exist, she would build
-              it from scratch.
+              Our founder began by testing recipes in a small kitchen, choosing slow roasting instead of frying and blending authentic Indian spices with nutrient-rich grains.
             </p>
+          </article>
 
-            <h3 className="text-xl font-black">From a Mother’s Kitchen to the Roasted Kart Identity</h3>
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Mission</h2>
             <p>
-              For two years, her home kitchen became a laboratory of love. She completely rejected the industry
-              standard of deep-frying, choosing instead the patient, meticulous art of slow-roasting. She replaced
-              empty calories with nutrient-dense millets, grains, and pulses, blending them with authentic,
-              hand-picked spices.
+              Our mission is to make healthier snacking exciting for every occasion. We believe snacks should energize your day without compromising on flavour or quality.
             </p>
-            <p>
-              It wasn’t an easy path. There were countless late nights, collapsed batches, and moments of doubt when
-              the crunch wasn’t perfect. But giving up wasn’t an option. This wasn’t a business plan yet; it was a mother
-              protecting her family’s well-being.
-            </p>
-            <p>Through that stubborn care, she perfected the unique, bold profiles that define the Roasted Kart experience today:</p>
+          </article>
 
-            <ul className="list-disc ml-5 space-y-2 text-sm text-[#555]">
-              <li><strong>Classic Chatpata:</strong> The comforting, nostalgic tang of traditional home-style spices.</li>
-              <li><strong>Pudina Zest:</strong> A refreshing, herb-infused burst of crisp coolness.</li>
-              <li><strong>Peri Peri Roast:</strong> A fiery, modern kick for the adventurous palate.</li>
-              <li><strong>Khatta Meetha Twist:</strong> The perfect, delicate balance of sweet and savory notes.</li>
-            </ul>
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Why RoastedKart was started</h2>
+            <p>
+              We started RoastedKart because too many ‘healthy’ snacks felt boring and too many tasty snacks felt unhealthy. We set out to build a snack brand that bridges that gap.
+            </p>
+          </article>
 
-            <h3 className="text-xl font-black mt-2">The Roasted Kart Promise</h3>
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Quality commitment</h2>
             <p>
-              We didn't start in a boardroom; we started at the heart of the home. Today, Roasted Kart stands as a
-              premium tech-forward food brand built on three unbreakable pillars:
+              We use clean ingredients, avoid palm oil, and roast each batch carefully to preserve flavour and texture. Every product is crafted with quality checks at every stage.
             </p>
-            <p className="font-black">0% Palm Oil. 100% Slow-Roasted. Zero Compromise.</p>
+          </article>
+
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Healthy snacking philosophy</h2>
             <p>
-              Every pack we seal carries the warmth of homemade effort, the precision of clean food crafting, and the
-              absolute promise of mindful snacking. We prove that healthy eating never has to feel boring, and bold
-              flavor doesn't require a deep-fryer.
+              Healthy snacks should be satisfying, nourishing, and fun. We combine whole grains, pulses, and authentic spices so you can snack with confidence.
             </p>
-            <p>From our kitchen to your home, welcome to the Roasted Kart family. Taste the care in every crunch.</p>
-          </div>
+          </article>
+
+          <article className="space-y-3">
+            <h2 className="text-3xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Manufacturing standards</h2>
+            <p>
+              Our products are made under strict hygiene and quality standards. We follow best practices for sourcing, roasting, and packaging to ensure freshness and safety.
+            </p>
+          </article>
         </div>
 
         <div className="rounded-3xl border border-[#00000012] bg-[#fff2e0] p-7">
