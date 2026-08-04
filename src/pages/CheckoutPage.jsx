@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { usePaymentStatus } from "../context/PaymentStatusContext";
 
-const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+const fallbackRazorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -36,13 +36,6 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
-    if (!razorpayKeyId) {
-      setPaymentError(
-        "Razorpay is not configured for live checkout yet. Set VITE_RAZORPAY_KEY_ID in the deployed environment or .env, then rebuild and redeploy the site.",
-      );
-      return;
-    }
-
     if (!window.Razorpay) {
       setPaymentError("Razorpay checkout script is still loading. Please try again in a moment.");
       return;
@@ -67,6 +60,12 @@ export default function CheckoutPage() {
         throw new Error(
           orderData.message || "Unable to create Razorpay order. Please verify the backend credentials and try again.",
         );
+      }
+
+      const razorpayKeyId = orderData.key_id || fallbackRazorpayKeyId;
+
+      if (!razorpayKeyId) {
+        throw new Error("Razorpay public key is missing from the server configuration.");
       }
 
       setStatus({

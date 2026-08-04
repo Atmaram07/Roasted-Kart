@@ -58,6 +58,7 @@ app.post("/api/create-order", async (req, res) => {
       order_id: order.id,
       amount: order.amount,
       currency: order.currency,
+      key_id: razorpayKeyId,
     });
   } catch (error) {
     const description = error?.error?.description || error?.message || "";
