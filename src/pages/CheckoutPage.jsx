@@ -37,7 +37,9 @@ export default function CheckoutPage() {
 
   const handleCheckout = async () => {
     if (!razorpayKeyId) {
-      setPaymentError("Razorpay key is missing. Please set VITE_RAZORPAY_KEY_ID in the environment.");
+      setPaymentError(
+        "Razorpay is not configured for live checkout yet. Set VITE_RAZORPAY_KEY_ID in the deployed environment or .env, then rebuild and redeploy the site.",
+      );
       return;
     }
 

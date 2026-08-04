@@ -25,9 +25,9 @@ export default function SiteLayout() {
       <nav className="sticky top-0 z-50 border-b border-[#00000014] bg-[#fff8ef]/92 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <NavLink to="/" className="flex items-center gap-3">
-            <img src={logoImg} alt="RoastedKart" className="h-14 md:h-24 lg:h-28 w-auto object-contain" />
+            <img src={logoImg} alt="RoastedKart" className="h-24 md:h-24 lg:h-36 w-auto object-contain" />
             <span className="text-lg md:text-2xl lg:text-3xl font-black tracking-wide text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">
-              RoastedKart
+              
             </span>
           </NavLink>
 
@@ -141,7 +141,7 @@ export default function SiteLayout() {
                     <img src={logoImg} alt="RoastedKart" className="h-16 w-auto object-contain" />
                   </NavLink>
                   <div>
-                    <NavLink to="/" className="text-xl font-black text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]">RoastedKart</NavLink>
+                    <NavLink to="/" className="text-xl font-black text-[#2b2b2b] [font-family:'Space_Grotesk',sans-serif]"></NavLink>
                     <p className="mt-1 text-sm text-[#5a5a5a]">Crunchy, clean, and crafted for every snack moment.</p>
                   </div>
                 </div>
