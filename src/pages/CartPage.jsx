@@ -1,9 +1,11 @@
 ﻿import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { usePaymentStatus } from "../context/PaymentStatusContext";
 
 export default function CartPage() {
   const { items, count, subtotal, updateQty, removeFromCart, clearCart } = useCart();
+  const { status } = usePaymentStatus();
   const shipping = subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
 
@@ -91,6 +93,14 @@ export default function CartPage() {
                 <p className="flex justify-between"><span>Shipping</span><span>{shipping === 0 ? "Free" : `Rs ${shipping}`}</span></p>
                 <p className="flex justify-between text-lg font-black text-[#1f1f1f]"><span>Total</span><span>Rs {total}</span></p>
               </div>
+              {status.paymentState !== "idle" && (
+                <div className="mt-5 rounded-2xl border border-[#00000012] bg-[#fffaf2] p-4 text-sm text-[#555]">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ff7a00]">Payment status</p>
+                  <p className="mt-2 font-black text-[#1f1f1f]">{status.message || "Payment state updated."}</p>
+                  {status.orderId && <p className="mt-1">Order ID: {status.orderId}</p>}
+                  {status.paymentId && <p>Payment ID: {status.paymentId}</p>}
+                </div>
+              )}
               <Link
                 to="/checkout"
                 className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#1f1f1f] px-5 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-[#ff6b00]"

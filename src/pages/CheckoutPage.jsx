@@ -1,12 +1,18 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { usePaymentStatus } from "../context/PaymentStatusContext";
+
+const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
+  const { setStatus } = usePaymentStatus();
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", city: "", pincode: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const shipping = subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
@@ -27,6 +33,154 @@ export default function CheckoutPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setSubmitted(true);
+  };
+
+  const handleCheckout = async () => {
+    if (!razorpayKeyId) {
+      setPaymentError("Razorpay key is missing. Please set VITE_RAZORPAY_KEY_ID in the environment.");
+      return;
+    }
+
+    if (!window.Razorpay) {
+      setPaymentError("Razorpay checkout script is still loading. Please try again in a moment.");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setPaymentError("");
+
+    try {
+      const orderResponse = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Math.round(total * 100),
+          receipt: `roastedkart_${Date.now()}`,
+        }),
+      });
+
+      const orderData = await orderResponse.json();
+
+      if (!orderResponse.ok) {
+        throw new Error(
+          orderData.message || "Unable to create Razorpay order. Please verify the backend credentials and try again.",
+        );
+      }
+
+      setStatus({
+        paymentState: "creating",
+        orderId: orderData.order_id,
+        paymentId: "",
+        amount: orderData.amount,
+        currency: orderData.currency,
+        message: "Razorpay order created. Complete the payment modal to finish checkout.",
+      });
+
+      const options = {
+        key: razorpayKeyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "RoastedKart",
+        description: "Snack box checkout",
+        order_id: orderData.order_id,
+        handler: async function (response) {
+          try {
+            const verifyResponse = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(response),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok) {
+              throw new Error(verifyData.message || "Payment could not be verified.");
+            }
+
+            const recordedOrder = await fetch("/api/orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                signature: response.razorpay_signature,
+                customer: {
+                  name: form.name,
+                  email: form.email,
+                  phone: form.phone,
+                  address: `${form.address}, ${form.city} - ${form.pincode}`,
+                  notes: form.notes,
+                },
+              }),
+            });
+
+            const recordedOrderData = await recordedOrder.json();
+            if (!recordedOrder.ok) {
+              throw new Error(recordedOrderData.message || "Order record could not be saved.");
+            }
+
+            setStatus({
+              paymentState: "paid",
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              amount: orderData.amount,
+              currency: orderData.currency,
+              message: "Payment verified and order record saved.",
+            });
+            clearCart();
+            navigate(`/order-success?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&amount=${orderData.amount}&currency=${orderData.currency}`);
+            setPaymentError("");
+          } catch (error) {
+            setStatus({
+              paymentState: "failed",
+              orderId: orderData.order_id,
+              paymentId: "",
+              amount: orderData.amount,
+              currency: orderData.currency,
+              message: error.message || "Payment verification failed.",
+            });
+            setPaymentError(error.message || "Payment verification failed.");
+          }
+        },
+        prefill: {
+          name: form.name,
+          email: form.email || "",
+          contact: form.phone,
+        },
+        notes: {
+          address: `${form.address}, ${form.city} - ${form.pincode}`,
+          notes: form.notes,
+        },
+        theme: {
+          color: "#ff7a00",
+        },
+        modal: {
+          ondismiss: function () {
+            setPaymentError("Payment cancelled. Your order is still saved in the cart.");
+          },
+        },
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.on("payment.failed", function (response) {
+        setStatus({
+          paymentState: "failed",
+          orderId: orderData.order_id,
+          paymentId: "",
+          amount: orderData.amount,
+          currency: orderData.currency,
+          message: response.error.description || "Payment failed. Please try again.",
+        });
+        setPaymentError(response.error.description || "Payment failed. Please try again.");
+      });
+      razorpayInstance.open();
+    } catch (error) {
+      setPaymentError(error.message || "Unable to start the payment flow.");
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   const handleWhatsApp = () => {
@@ -172,22 +326,26 @@ export default function CheckoutPage() {
               <div className="mt-8 rounded-3xl border border-[#ffcc99] bg-[#fff7ed] p-6 text-[#6b3b00] shadow-sm">
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#ff7a00]">Website checkout ready</p>
                 <p className="mt-3 text-base leading-relaxed">
-                  Your details are set. For now, confirm the order on WhatsApp and we&apos;ll reserve your items while online payments are connected.
+                  Your details are set. You can now complete checkout with Razorpay for a secure card or UPI payment, or fall back to WhatsApp for manual confirmation.
                 </p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   <button
+                    onClick={handleCheckout}
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] px-6 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
+                    disabled={isProcessingPayment}
+                  >
+                    {isProcessingPayment ? "Processing..." : "Pay with Razorpay"}
+                  </button>
+                  <button
                     onClick={handleWhatsApp}
-                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] px-6 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:opacity-95"
+                    className="inline-flex items-center justify-center rounded-full border border-[#00000015] bg-white px-6 py-3 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:border-[#ff6b00]"
                   >
                     Confirm on WhatsApp
                   </button>
-                  <Link
-                    to="/shop"
-                    className="inline-flex items-center justify-center rounded-full border border-[#00000015] bg-white px-6 py-3 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:border-[#ff6b00]"
-                  >
-                    Continue shopping
-                  </Link>
                 </div>
+                {paymentError && (
+                  <p className="mt-4 rounded-2xl border border-[#f4b3a7] bg-[#fff0ed] px-4 py-3 text-sm text-[#922d1d]">{paymentError}</p>
+                )}
               </div>
             )}
           </div>
@@ -223,7 +381,7 @@ export default function CheckoutPage() {
               <div className="rounded-3xl border border-[#00000012] bg-[#fffaf2] p-5 text-sm text-[#555]">
                 <p className="font-black uppercase tracking-[0.18em] text-[#ff7a00]">Payment status</p>
                 <p className="mt-3 leading-relaxed">
-                  Online payments are coming soon. For now, place your order via WhatsApp and we will confirm your shipping details immediately.
+                  Pay securely with Razorpay using the Standard Checkout modal. The order is created server-side and verified with the signature sent back from Razorpay.
                 </p>
               </div>
             </div>

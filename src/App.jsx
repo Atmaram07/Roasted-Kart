@@ -12,6 +12,8 @@ import ProductPage from "./pages/ProductPage";
 import ShopPage from "./pages/ShopPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import OrderSuccessPage from "./pages/OrderSuccessPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 import BuildYourOwnBoxPage from "./pages/BuildYourOwnBoxPage";
 
 export default function App() {
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="/build-your-own" element={<BuildYourOwnBoxPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-success" element={<OrderSuccessPage />} />
+        <Route path="/admin/orders" element={<AdminOrdersPage />} />
         <Route path="/product/:variantSlug" element={<ProductPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />

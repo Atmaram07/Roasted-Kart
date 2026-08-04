@@ -4,12 +4,15 @@ import App from './App'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
+import { PaymentStatusProvider } from './context/PaymentStatusContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <CartProvider>
-        <App />
+        <PaymentStatusProvider>
+          <App />
+        </PaymentStatusProvider>
       </CartProvider>
     </BrowserRouter>
   </React.StrictMode>,
