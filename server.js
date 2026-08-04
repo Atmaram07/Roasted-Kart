@@ -1,12 +1,18 @@
 import express from "express";
 import cors from "cors";
 import crypto from "node:crypto";
-import Razorpay from "razorpay";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
 import "dotenv/config";
 
 const app = express();
-const port = 3001;
+const port = Number(process.env.PORT || 3001);
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirPath = path.dirname(currentFilePath);
+const distDirPath = path.join(currentDirPath, "dist");
+const distIndexPath = path.join(distDirPath, "index.html");
 
 const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -14,11 +20,6 @@ const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 if (!razorpayKeyId || !razorpayKeySecret) {
   throw new Error("Missing Razorpay environment variables.");
 }
-
-const razorpay = new Razorpay({
-  key_id: razorpayKeyId,
-  key_secret: razorpayKeySecret,
-});
 
 const db = new Database("orders.db");
 
@@ -36,8 +37,49 @@ db.exec(`
   );
 `);
 
+const orderColumns = db.prepare(`PRAGMA table_info(orders)`).all();
+const hasUpdatedAtColumn = orderColumns.some((column) => column.name === "updatedAt");
+
+if (!hasUpdatedAtColumn) {
+  db.exec(`ALTER TABLE orders ADD COLUMN updatedAt TEXT`);
+  db.exec(`UPDATE orders SET updatedAt = createdAt WHERE updatedAt IS NULL OR updatedAt = ''`);
+}
+
 app.use(cors());
 app.use(express.json());
+
+async function createRazorpayOrder({ amount, receipt }) {
+  const authToken = Buffer.from(`${razorpayKeyId}:${razorpayKeySecret}`).toString("base64");
+  const response = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${authToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount,
+      currency: "INR",
+      receipt,
+    }),
+  });
+
+  const rawText = await response.text();
+  const payload = rawText ? JSON.parse(rawText) : {};
+
+  if (!response.ok) {
+    const description = payload?.error?.description || payload?.error?.reason || payload?.message || "";
+    const isAuthFailure = response.status === 401 || /authentication failed/i.test(description);
+    const message = isAuthFailure
+      ? "Razorpay authentication failed. Please confirm the configured test keys are valid for the active account."
+      : description || "Unable to create Razorpay order.";
+
+    throw Object.assign(new Error(message), {
+      statusCode: isAuthFailure ? 401 : response.status || 500,
+    });
+  }
+
+  return payload;
+}
 
 app.post("/api/create-order", async (req, res) => {
   const amount = Number(req.body.amount);
@@ -48,11 +90,7 @@ app.post("/api/create-order", async (req, res) => {
   }
 
   try {
-    const order = await razorpay.orders.create({
-      amount,
-      currency: "INR",
-      receipt,
-    });
+    const order = await createRazorpayOrder({ amount, receipt });
 
     return res.json({
       order_id: order.id,
@@ -61,16 +99,8 @@ app.post("/api/create-order", async (req, res) => {
       key_id: razorpayKeyId,
     });
   } catch (error) {
-    const description = error?.error?.description || error?.message || "";
-    const isAuthFailure =
-      error?.statusCode === 401 ||
-      error?.error?.code === "BAD_REQUEST_ERROR" ||
-      /authentication failed/i.test(description);
-
-    const statusCode = isAuthFailure ? 401 : 500;
-    const message = isAuthFailure
-      ? "Razorpay authentication failed. Please confirm the configured test keys are valid for the active account."
-      : description || "Unable to create Razorpay order.";
+    const message = error?.message || "Unable to create Razorpay order.";
+    const statusCode = Number(error?.statusCode) || 500;
 
     return res.status(statusCode).json({ message });
   }
@@ -120,13 +150,14 @@ app.post("/api/orders", (req, res) => {
     signature,
     customer: JSON.stringify(customer ?? {}),
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     status: "Pending",
   };
 
   db.prepare(
     `
-      INSERT INTO orders (id, orderId, paymentId, amount, currency, signature, customer, createdAt, status)
-      VALUES (@id, @orderId, @paymentId, @amount, @currency, @signature, @customer, @createdAt, @status)
+      INSERT INTO orders (id, orderId, paymentId, amount, currency, signature, customer, createdAt, updatedAt, status)
+      VALUES (@id, @orderId, @paymentId, @amount, @currency, @signature, @customer, @createdAt, @updatedAt, @status)
     `,
   ).run(record);
 
@@ -164,9 +195,10 @@ app.patch("/api/orders/:id", (req, res) => {
   const updated = {
     ...existing,
     status,
+    updatedAt: new Date().toISOString(),
   };
 
-  db.prepare(`UPDATE orders SET status = ? WHERE id = ?`).run(status, id);
+  db.prepare(`UPDATE orders SET status = ?, updatedAt = ? WHERE id = ?`).run(updated.status, updated.updatedAt, id);
 
   return res.json({ success: true, message: "Order updated.", order: updated });
 });
@@ -176,6 +208,18 @@ app.delete("/api/orders", (_req, res) => {
   return res.json({ success: true, message: "Order records cleared." });
 });
 
+app.use("/api", (_req, res) => {
+  return res.status(404).json({ message: "API route not found." });
+});
+
+if (existsSync(distIndexPath)) {
+  app.use(express.static(distDirPath));
+
+  app.get(/^(?!\/api).*/, (_req, res) => {
+    return res.sendFile(distIndexPath);
+  });
+}
+
 app.listen(port, () => {
-  console.log(`Razorpay backend running on http://localhost:${port}`);
+  console.log(`RoastedKart server running on http://localhost:${port}`);
 });

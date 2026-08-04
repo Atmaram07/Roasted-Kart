@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { usePaymentStatus } from "../context/PaymentStatusContext";
+import { apiRequest } from "../lib/api";
 
 const fallbackRazorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
@@ -45,22 +46,18 @@ export default function CheckoutPage() {
     setPaymentError("");
 
     try {
-      const orderResponse = await fetch("/api/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: Math.round(total * 100),
-          receipt: `roastedkart_${Date.now()}`,
-        }),
-      });
-
-      const orderData = await orderResponse.json();
-
-      if (!orderResponse.ok) {
-        throw new Error(
-          orderData.message || "Unable to create Razorpay order. Please verify the backend credentials and try again.",
-        );
-      }
+      const orderData = await apiRequest(
+        "/api/create-order",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: Math.round(total * 100),
+            receipt: `roastedkart_${Date.now()}`,
+          }),
+        },
+        "Unable to create Razorpay order. Please verify the backend credentials and try again.",
+      );
 
       const razorpayKeyId = orderData.key_id || fallbackRazorpayKeyId;
 
@@ -86,41 +83,38 @@ export default function CheckoutPage() {
         order_id: orderData.order_id,
         handler: async function (response) {
           try {
-            const verifyResponse = await fetch("/api/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(response),
-            });
+            await apiRequest(
+              "/api/verify-payment",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response),
+              },
+              "Payment could not be verified.",
+            );
 
-            const verifyData = await verifyResponse.json();
-
-            if (!verifyResponse.ok) {
-              throw new Error(verifyData.message || "Payment could not be verified.");
-            }
-
-            const recordedOrder = await fetch("/api/orders", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderId: response.razorpay_order_id,
-                paymentId: response.razorpay_payment_id,
-                amount: orderData.amount,
-                currency: orderData.currency,
-                signature: response.razorpay_signature,
-                customer: {
-                  name: form.name,
-                  email: form.email,
-                  phone: form.phone,
-                  address: `${form.address}, ${form.city} - ${form.pincode}`,
-                  notes: form.notes,
-                },
-              }),
-            });
-
-            const recordedOrderData = await recordedOrder.json();
-            if (!recordedOrder.ok) {
-              throw new Error(recordedOrderData.message || "Order record could not be saved.");
-            }
+            await apiRequest(
+              "/api/orders",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId: response.razorpay_order_id,
+                  paymentId: response.razorpay_payment_id,
+                  amount: orderData.amount,
+                  currency: orderData.currency,
+                  signature: response.razorpay_signature,
+                  customer: {
+                    name: form.name,
+                    email: form.email,
+                    phone: form.phone,
+                    address: `${form.address}, ${form.city} - ${form.pincode}`,
+                    notes: form.notes,
+                  },
+                }),
+              },
+              "Order record could not be saved.",
+            );
 
             setStatus({
               paymentState: "paid",
