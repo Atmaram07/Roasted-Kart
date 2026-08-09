@@ -24,7 +24,14 @@ export async function parseApiResponse(response, fallbackMessage) {
 }
 
 export async function apiRequest(path, options = {}, fallbackMessage = "Unable to complete the request.") {
-  const response = await fetch(getApiUrl(path), options);
+  let response;
+
+  try {
+    response = await fetch(getApiUrl(path), options);
+  } catch {
+    throw new Error("Unable to reach the checkout backend. Please confirm the server is running and try again.");
+  }
+
   const data = await parseApiResponse(response, fallbackMessage);
 
   if (!response.ok) {

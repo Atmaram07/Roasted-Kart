@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { usePaymentStatus } from "../context/PaymentStatusContext";
 import { apiRequest } from "../lib/api";
 
 const fallbackRazorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+const fallbackSupportPhone = "917425049203";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -14,6 +15,13 @@ export default function CheckoutPage() {
   const [submitted, setSubmitted] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [checkoutConfig, setCheckoutConfig] = useState({
+    loading: true,
+    paymentEnabled: false,
+    keyId: fallbackRazorpayKeyId || "",
+    supportPhone: fallbackSupportPhone,
+    configError: "",
+  });
 
   const shipping = subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
@@ -26,6 +34,50 @@ export default function CheckoutPage() {
     `Hi RoastedKart, I want to place a website order:\n${orderLines}\n\nSubtotal: Rs ${subtotal}\nShipping: Rs ${shipping === 0 ? "Free" : shipping}\nTotal: Rs ${total}\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nAddress: ${form.address}, ${form.city} - ${form.pincode}\nNotes: ${form.notes}`,
   );
 
+  useEffect(() => {
+    let isActive = true;
+
+    const loadCheckoutConfig = async () => {
+      try {
+        const config = await apiRequest(
+          "/api/checkout-config",
+          {},
+          "Unable to load checkout settings right now.",
+        );
+
+        if (!isActive) {
+          return;
+        }
+
+        setCheckoutConfig({
+          loading: false,
+          paymentEnabled: Boolean(config.paymentEnabled),
+          keyId: config.key_id || fallbackRazorpayKeyId || "",
+          supportPhone: config.supportPhone || fallbackSupportPhone,
+          configError: "",
+        });
+      } catch (error) {
+        if (!isActive) {
+          return;
+        }
+
+        setCheckoutConfig({
+          loading: false,
+          paymentEnabled: false,
+          keyId: fallbackRazorpayKeyId || "",
+          supportPhone: fallbackSupportPhone,
+          configError: error.message || "Unable to load checkout settings right now.",
+        });
+      }
+    };
+
+    loadCheckoutConfig();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -37,6 +89,18 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
+    if (checkoutConfig.loading) {
+      setPaymentError("Checkout is still connecting to the payment server. Please try again in a moment.");
+      return;
+    }
+
+    if (!checkoutConfig.paymentEnabled) {
+      setPaymentError(
+        checkoutConfig.configError || "Online payment is temporarily unavailable. Please use WhatsApp confirmation for now.",
+      );
+      return;
+    }
+
     if (!window.Razorpay) {
       setPaymentError("Razorpay checkout script is still loading. Please try again in a moment.");
       return;
@@ -56,10 +120,10 @@ export default function CheckoutPage() {
             receipt: `roastedkart_${Date.now()}`,
           }),
         },
-        "Unable to create Razorpay order. Please verify the backend credentials and try again.",
+        "Unable to create Razorpay order right now. Please try again after confirming the backend can reach Razorpay.",
       );
 
-      const razorpayKeyId = orderData.key_id || fallbackRazorpayKeyId;
+      const razorpayKeyId = orderData.key_id || checkoutConfig.keyId || fallbackRazorpayKeyId;
 
       if (!razorpayKeyId) {
         throw new Error("Razorpay public key is missing from the server configuration.");
@@ -179,7 +243,7 @@ export default function CheckoutPage() {
   };
 
   const handleWhatsApp = () => {
-    window.open(`https://wa.me/917425049203?text=${orderMessage}`, "_blank");
+    window.open(`https://wa.me/${checkoutConfig.supportPhone || fallbackSupportPhone}?text=${orderMessage}`, "_blank");
     clearCart();
     navigate("/shop");
   };
@@ -323,13 +387,18 @@ export default function CheckoutPage() {
                 <p className="mt-3 text-base leading-relaxed">
                   Your details are set. You can now complete checkout with Razorpay for a secure card or UPI payment, or fall back to WhatsApp for manual confirmation.
                 </p>
+                {!checkoutConfig.loading && !checkoutConfig.paymentEnabled && (
+                  <p className="mt-4 rounded-2xl border border-[#f4b3a7] bg-[#fff0ed] px-4 py-3 text-sm text-[#922d1d]">
+                    Online payment is temporarily unavailable on the live checkout. Customers can still place the order through WhatsApp safely.
+                  </p>
+                )}
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   <button
                     onClick={handleCheckout}
                     className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] px-6 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
-                    disabled={isProcessingPayment}
+                    disabled={isProcessingPayment || checkoutConfig.loading || !checkoutConfig.paymentEnabled}
                   >
-                    {isProcessingPayment ? "Processing..." : "Pay with Razorpay"}
+                    {checkoutConfig.loading ? "Connecting..." : isProcessingPayment ? "Processing..." : "Pay with Razorpay"}
                   </button>
                   <button
                     onClick={handleWhatsApp}
@@ -377,6 +446,13 @@ export default function CheckoutPage() {
                 <p className="font-black uppercase tracking-[0.18em] text-[#ff7a00]">Payment status</p>
                 <p className="mt-3 leading-relaxed">
                   Pay securely with Razorpay using the Standard Checkout modal. The order is created server-side and verified with the signature sent back from Razorpay.
+                </p>
+                <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[#8c6a3c]">
+                  {checkoutConfig.loading
+                    ? "Checking payment server availability..."
+                    : checkoutConfig.paymentEnabled
+                      ? "Payment server ready"
+                      : "Manual order fallback active"}
                 </p>
               </div>
             </div>

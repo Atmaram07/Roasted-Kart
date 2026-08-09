@@ -48,23 +48,61 @@ if (!hasUpdatedAtColumn) {
 app.use(cors());
 app.use(express.json());
 
+app.get("/api/health", (_req, res) => {
+  return res.json({
+    ok: true,
+    service: "roastedkart-checkout",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/api/checkout-config", (_req, res) => {
+  return res.json({
+    paymentEnabled: Boolean(razorpayKeyId && razorpayKeySecret),
+    key_id: razorpayKeyId,
+    manualCheckoutEnabled: true,
+    supportPhone: "917425049203",
+  });
+});
+
 async function createRazorpayOrder({ amount, receipt }) {
   const authToken = Buffer.from(`${razorpayKeyId}:${razorpayKeySecret}`).toString("base64");
-  const response = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${authToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      amount,
-      currency: "INR",
-      receipt,
-    }),
-  });
+  let response;
+
+  try {
+    response = await fetch("https://api.razorpay.com/v1/orders", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${authToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount,
+        currency: "INR",
+        receipt,
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (error) {
+    const causeCode = error?.cause?.code || "";
+    const isConnectivityIssue = ["EACCES", "ECONNREFUSED", "ECONNRESET", "ENOTFOUND", "ETIMEDOUT"].includes(causeCode);
+    const message = isConnectivityIssue
+      ? "The backend could not reach Razorpay. Please check the server's outbound internet access or firewall settings."
+      : "Unable to connect to Razorpay from the backend.";
+
+    throw Object.assign(new Error(message), {
+      statusCode: 502,
+    });
+  }
 
   const rawText = await response.text();
-  const payload = rawText ? JSON.parse(rawText) : {};
+  let payload = {};
+
+  try {
+    payload = rawText ? JSON.parse(rawText) : {};
+  } catch {
+    payload = { message: rawText };
+  }
 
   if (!response.ok) {
     const description = payload?.error?.description || payload?.error?.reason || payload?.message || "";
