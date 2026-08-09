@@ -17,7 +17,7 @@ export default function CheckoutPage() {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [checkoutConfig, setCheckoutConfig] = useState({
     loading: true,
-    paymentEnabled: false,
+    paymentEnabled: Boolean(fallbackRazorpayKeyId),
     keyId: fallbackRazorpayKeyId || "",
     supportPhone: fallbackSupportPhone,
     configError: "",
@@ -51,7 +51,7 @@ export default function CheckoutPage() {
 
         setCheckoutConfig({
           loading: false,
-          paymentEnabled: Boolean(config.paymentEnabled),
+          paymentEnabled: config.paymentEnabled !== false && Boolean(config.key_id || fallbackRazorpayKeyId),
           keyId: config.key_id || fallbackRazorpayKeyId || "",
           supportPhone: config.supportPhone || fallbackSupportPhone,
           configError: "",
@@ -63,10 +63,10 @@ export default function CheckoutPage() {
 
         setCheckoutConfig({
           loading: false,
-          paymentEnabled: false,
+          paymentEnabled: Boolean(fallbackRazorpayKeyId),
           keyId: fallbackRazorpayKeyId || "",
           supportPhone: fallbackSupportPhone,
-          configError: error.message || "Unable to load checkout settings right now.",
+          configError: Boolean(fallbackRazorpayKeyId) ? "" : error.message || "Unable to load checkout settings right now.",
         });
       }
     };

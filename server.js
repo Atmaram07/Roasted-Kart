@@ -1,3 +1,7 @@
+// DEPRECATED: This file is no longer used for deployment. The app now runs on
+// Vercel Serverless Functions under /api (see api/*.js). This file is kept only
+// as a reference / for optionally running a local Express server outside Vercel.
+// It requires `npm install express cors better-sqlite3` if you want to run it directly.
 import express from "express";
 import cors from "cors";
 import crypto from "node:crypto";
