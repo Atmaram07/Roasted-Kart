@@ -169,6 +169,11 @@ export default function ShopPage() {
                         <span className="rounded-full bg-[#fff0e4] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#8b4b00]">
                           {product.category}
                         </span>
+                        {product.websiteExclusive && (
+                          <span className="rounded-full bg-[#1f1f1f] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#ffd26f]">
+                            Website Exclusive
+                          </span>
+                        )}
                         {variant.tags.slice(0, 1).map((tag) => (
                           <span key={tag} className="rounded-full border border-[#00000010] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#999]">
                             {tag}
@@ -217,7 +222,7 @@ export default function ShopPage() {
                       </div>
 
                       {/* Quick buy row — visible on hover */}
-                      <div className="mt-3 grid grid-cols-1 gap-2 overflow-hidden transition-all duration-300 max-h-0 group-hover:max-h-48 sm:grid-cols-3">
+                      <div className={`mt-3 grid grid-cols-1 gap-2 overflow-hidden transition-all duration-300 max-h-0 group-hover:max-h-48 ${variant.amazon ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
                         <button
                           type="button"
                           onClick={() => {
@@ -228,14 +233,16 @@ export default function ShopPage() {
                         >
                           🛒 Buy on Website
                         </button>
-                        <a
-                          href={variant.amazon}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 rounded-full bg-[#ff7a00] py-2 text-[10px] font-black uppercase tracking-wide text-white"
-                        >
-                          Amazon
-                        </a>
+                        {variant.amazon && (
+                          <a
+                            href={variant.amazon}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-1.5 rounded-full bg-[#ff7a00] py-2 text-[10px] font-black uppercase tracking-wide text-white"
+                          >
+                            Amazon
+                          </a>
+                        )}
                         <a
                           href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}
                           target="_blank"

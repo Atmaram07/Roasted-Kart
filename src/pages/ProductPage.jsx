@@ -124,6 +124,11 @@ export default function ProductPage() {
               <span className={`h-2 w-2 rounded-full bg-gradient-to-r ${product.heroColor}`} />
               <span className="text-xs font-black uppercase tracking-[0.16em] text-[#ff6b00]">{product.category}</span>
             </div>
+            {product.websiteExclusive && (
+              <div className="inline-flex w-fit rounded-full bg-[#1f1f1f] px-4 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-[#ffd26f]">
+                Website Exclusive
+              </div>
+            )}
 
             {/* Title */}
             <div>
@@ -217,14 +222,16 @@ export default function ProductPage() {
                 >
                   Buy on Website
                 </button>
-                <a
-                  href={variant.amazon}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(255,107,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(255,107,0,0.45)]"
-                >
-                  <span>🛒</span> Buy on Amazon
-                </a>
+                {variant.amazon && (
+                  <a
+                    href={variant.amazon}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ff7a00] to-[#ff3d81] py-4 text-sm font-black uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(255,107,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(255,107,0,0.45)]"
+                  >
+                    <span>🛒</span> Buy on Amazon
+                  </a>
+                )}
               </div>
               <a
                 href={`https://wa.me/917425049203?text=Hi%2C%20I%27d%20like%20to%20order%20${encodeURIComponent(quantity + ' x ' + product.name)}%20from%20RoastedKart%20%F0%9F%A5%9C`}

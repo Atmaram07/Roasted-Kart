@@ -4,9 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { products, storeLinks } from "../data/catalog";
-import hero1Image from "../assets/hero 1.png";
-import hero2Image from "../assets/hero 2.png";
-import hero3Image from "../assets/hero 3.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -72,10 +69,11 @@ const heroFeatures = [
 ];
 
 export default function HomePage() {
+  const homepageProducts = products.filter((product) => !product.websiteExclusive);
   const [email, setEmail] = useState("");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const testimonialTimer = useRef(null);
-  const comboProduct = products.find((product) => product.id === "soya-pops-combo");
+  const comboProduct = homepageProducts.find((product) => product.id === "soya-pops-combo");
   const comboVariant = comboProduct?.variants[0];
 
   const startTestimonialTimer = useCallback(() => {
@@ -171,7 +169,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
           <h2 className="text-center text-4xl font-black uppercase text-[#1f1f1f] [font-family:'Space_Grotesk',sans-serif]">Our Boxes</h2>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {products.map((product, idx) => (
+            {homepageProducts.map((product, idx) => (
               <motion.article key={product.id} whileHover={{ y: -6, rotate: idx % 2 === 0 ? -1 : 1 }} className={`rounded-3xl bg-gradient-to-br ${product.heroColor} p-[2px]`}>
                 <div className="h-full rounded-3xl bg-white p-6">
                   <img src={product.image} alt={product.name} className="mx-auto h-56 w-full max-w-[320px] object-contain" />
@@ -260,7 +258,7 @@ export default function HomePage() {
             <Link to="/shop" className="text-sm font-black uppercase text-[#ff6b00]">See all</Link>
           </div>
           <div className="no-scrollbar flex gap-5 overflow-x-auto pb-2">
-            {products.map((product, idx) => {
+            {homepageProducts.map((product, idx) => {
               const variant = product.variants[0];
               return (
                 <motion.article
