@@ -7,6 +7,7 @@ import { storeLinks } from "../data/catalog";
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/shop", label: "Shop" },
+  { to: "/track-order", label: "Track Order" },
   { to: "/build-your-own", label: "Build Your Own" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -178,6 +179,7 @@ export default function SiteLayout() {
                   <NavLink to="/refund-cancellation-policy" className="transition hover:text-[#ff6b00]">Refund Policy</NavLink>
                   <NavLink to="/shipping-delivery-policy" className="transition hover:text-[#ff6b00]">Shipping Policy</NavLink>
                   <NavLink to="/faq" className="transition hover:text-[#ff6b00]">FAQs</NavLink>
+                  <NavLink to="/track-order" className="transition hover:text-[#ff6b00]">Track Order</NavLink>
                 </div>
               </div>
 

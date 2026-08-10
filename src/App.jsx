@@ -15,6 +15,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import BuildYourOwnBoxPage from "./pages/BuildYourOwnBoxPage";
+import TrackOrderPage from "./pages/TrackOrderPage";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-success" element={<OrderSuccessPage />} />
+        <Route path="/track-order" element={<TrackOrderPage />} />
         <Route path="/admin/orders" element={<AdminOrdersPage />} />
         <Route path="/product/:variantSlug" element={<ProductPage />} />
         <Route path="/about" element={<AboutPage />} />
