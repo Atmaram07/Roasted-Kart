@@ -6,14 +6,9 @@ import { flattenedVariants } from "../data/catalog";
 
 export default function BuildYourOwnBoxPage() {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addBundleToCart } = useCart();
   const [quantities, setQuantities] = useState(
     () => Object.fromEntries(flattenedVariants.map((variant) => [variant.id, 0])),
-  );
-
-  const selectedItems = useMemo(
-    () => flattenedVariants.filter((variant) => quantities[variant.id] > 0),
-    [quantities],
   );
 
   const selectedSlots = useMemo(
@@ -24,10 +19,7 @@ export default function BuildYourOwnBoxPage() {
   const remainingSlots = Math.max(0, 5 - selectedSlots.length);
   const canAddMore = selectedSlots.length < 5;
 
-  const totalPrice = selectedItems.reduce(
-    (sum, variant) => sum + variant.price * quantities[variant.id],
-    0,
-  );
+  const totalPrice = selectedSlots.length === 5 ? 999 : 0;
 
   const updateQuantity = (id, value) => {
     setQuantities((prev) => {
@@ -48,7 +40,8 @@ export default function BuildYourOwnBoxPage() {
   };
 
   const handleAddToCart = () => {
-    selectedItems.forEach((variant) => addToCart(variant, quantities[variant.id]));
+    if (selectedSlots.length !== 5) return;
+    addBundleToCart(selectedSlots);
     navigate("/cart");
   };
 
@@ -71,7 +64,7 @@ export default function BuildYourOwnBoxPage() {
             <div className="rounded-[2rem] border border-[#ffffff1a] bg-[#0f0f0f] p-6 text-sm text-[#d8d8d8]">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ffd26f]">Limited time offer</p>
               <p className="mt-3 text-2xl font-black text-white">₹999 / 5 packs</p>
-              <p className="mt-2 text-sm text-[#adadad]">Complete your box in one go — no extra charges for mix and match.</p>
+              <p className="mt-2 text-sm text-[#adadad]">Exactly five eligible packs for ₹999, with free shipping.</p>
             </div>
           </div>
           <div className="mt-10 rounded-[2rem] border border-[#ffffff12] bg-[#111111] p-6">
@@ -183,16 +176,16 @@ export default function BuildYourOwnBoxPage() {
             <div className="rounded-[1.75rem] bg-[#191919] p-6 text-sm text-[#d2d2d2]">
               <div className="flex items-center justify-between border-b border-[#ffffff10] pb-4 text-[#ffffff]">
                 <span>Subtotal</span>
-                <span className="font-black">₹{totalPrice}</span>
+                <span className="font-black">{selectedSlots.length === 5 ? "₹999" : "Select 5 packs"}</span>
               </div>
               <div className="mt-4 space-y-2 text-[#bcbcbc]">
                 <p className="flex items-center justify-between">
                   <span>Shipping</span>
-                  <span>₹49</span>
+                  <span className="font-black text-[#7ddc96]">Free</span>
                 </p>
                 <p className="flex items-center justify-between font-black text-white">
                   <span>Total</span>
-                  <span>₹{totalPrice + 49}</span>
+                  <span>{selectedSlots.length === 5 ? "₹999" : "—"}</span>
                 </p>
               </div>
             </div>
@@ -200,10 +193,10 @@ export default function BuildYourOwnBoxPage() {
             <button
               type="button"
               onClick={handleAddToCart}
-              disabled={selectedSlots.length === 0}
+              disabled={selectedSlots.length !== 5}
               className="inline-flex w-full items-center justify-center rounded-full bg-[#ff6b00] px-6 py-4 text-sm font-black uppercase tracking-wide text-white transition hover:bg-[#ff8b00] disabled:cursor-not-allowed disabled:bg-[#555]"
             >
-              Add selection to cart
+              Add 5 packs for ₹999
             </button>
 
             <Link
