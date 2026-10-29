@@ -1,4 +1,5 @@
 import { applyCors } from "../_cors.js";
+import { requireAdmin } from "../_admin-auth.js";
 import { getPool, ensureSchema } from "../_db.js";
 
 const allowedStatuses = ["Pending", "Packed", "Shipped"];
@@ -10,7 +11,6 @@ function toCamelCase(row) {
     paymentId: row.payment_id,
     amount: row.amount,
     currency: row.currency,
-    signature: row.signature,
     customer: row.customer,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -24,6 +24,8 @@ export default async function handler(req, res) {
   if (req.method !== "PATCH") {
     return res.status(405).json({ message: "Method not allowed." });
   }
+
+  if (!requireAdmin(req, res)) return;
 
   const { id } = req.query;
   const { status } = req.body ?? {};
@@ -52,6 +54,7 @@ export default async function handler(req, res) {
       order: { ...toCamelCase(existing), status, updatedAt },
     });
   } catch (error) {
-    return res.status(500).json({ message: error?.message || "Database error." });
+    console.error("Order update API error:", error);
+    return res.status(500).json({ message: "Unable to update order." });
   }
 }

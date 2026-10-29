@@ -232,7 +232,6 @@ export default function TrackOrderPage() {
                 <div className="rounded-[1.75rem] border border-[#00000010] bg-white p-5">
                   <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#999]">Customer</p>
                   <p className="mt-3 text-base font-black text-[#1f1f1f]">{order.customer?.name || "RoastedKart customer"}</p>
-                  <p className="mt-1 text-sm text-[#555]">{order.customer?.address || "Address not available"}</p>
                 </div>
               </div>
             )}

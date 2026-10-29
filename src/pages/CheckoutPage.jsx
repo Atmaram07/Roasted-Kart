@@ -23,11 +23,13 @@ export default function CheckoutPage() {
     configError: "",
   });
 
-  const shipping = subtotal > 500 ? 0 : 49;
+  const shipping = items.some((item) => item.isBundle) || subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
 
   const orderLines = items
-    .map((item) => `${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
+    .map((item) => item.isBundle
+      ? `Build Your Own Box (₹999, free shipping): ${item.bundleItems.map((pack) => pack.name).join(", ")}`
+      : `${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
     .join("\n");
 
   const orderMessage = encodeURIComponent(
@@ -116,8 +118,11 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: Math.round(total * 100),
-            receipt: `roastedkart_${Date.now()}`,
+            items: items.filter((item) => !item.isBundle).map((item) => ({ id: item.id, qty: item.qty })),
+            bundles: items.filter((item) => item.isBundle).map((item) => ({
+              qty: item.qty,
+              items: item.bundleItems.map((pack) => ({ id: pack.id, qty: pack.qty })),
+            })),
           }),
         },
         "Unable to create Razorpay order right now. Please try again after confirming the backend can reach Razorpay.",
@@ -272,7 +277,7 @@ export default function CheckoutPage() {
         <div className="mb-10 rounded-3xl border border-[#00000012] bg-white p-8">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ffca3a]">Checkout</p>
           <h1 className="mt-2 text-5xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">Website Order</h1>
-          <p className="mt-2 text-[#555]">Complete your details and use WhatsApp to confirm your order while web payments are being rolled out.</p>
+          <p className="mt-2 text-[#555]">Complete your details, then pay securely with Razorpay or choose WhatsApp for manual order confirmation.</p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[0.68fr_0.32fr]">
@@ -385,7 +390,7 @@ export default function CheckoutPage() {
               <div className="mt-8 rounded-3xl border border-[#ffcc99] bg-[#fff7ed] p-6 text-[#6b3b00] shadow-sm">
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#ff7a00]">Website checkout ready</p>
                 <p className="mt-3 text-base leading-relaxed">
-                  Your details are set. You can now complete checkout with Razorpay for a secure card or UPI payment, or fall back to WhatsApp for manual confirmation.
+                  Your details are ready. Razorpay will calculate the payable amount from the store catalogue, or you can choose WhatsApp for manual order confirmation.
                 </p>
                 {!checkoutConfig.loading && !checkoutConfig.paymentEnabled && (
                   <p className="mt-4 rounded-2xl border border-[#f4b3a7] bg-[#fff0ed] px-4 py-3 text-sm text-[#922d1d]">
@@ -423,12 +428,13 @@ export default function CheckoutPage() {
 
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={item.id} className="rounded-3xl bg-[#fff7f0] p-4">
+                  <div key={item.cartKey || item.id} className="rounded-3xl bg-[#fff7f0] p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-sm uppercase tracking-[0.12em] text-[#777]">{item.productCategory}</p>
                         <p className="mt-2 text-lg font-black uppercase text-[#1f1f1f]">{item.name}</p>
-                        <p className="mt-1 text-sm text-[#555]">{item.qty} × {item.weight}</p>
+                        <p className="mt-1 text-sm text-[#555]">{item.isBundle ? "1 custom box · 5 packs" : `${item.qty} × ${item.weight}`}</p>
+                        {item.isBundle && <p className="mt-2 text-xs leading-5 text-[#555]">Selected: {item.bundleItems.map((pack) => `${pack.name} (${pack.weight})`).join(", ")}</p>}
                       </div>
                       <p className="text-right text-lg font-black text-[#ff6b00]">Rs {item.price * item.qty}</p>
                     </div>
