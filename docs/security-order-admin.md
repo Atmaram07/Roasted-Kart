@@ -14,9 +14,11 @@ This branch adds server-side bearer-token authorization to order listing, deleti
 
 ## Important remaining blockers before production
 
-- The create-order endpoint still accepts an amount supplied by the browser. A follow-up must calculate prices and promotions on the server from a trusted catalogue, including the Build Your Own Box offer, and verify the actual Razorpay payment's order ID, captured status, amount, and currency before storing an order.
+- The create-order endpoint now calculates the regular product prices and shipping on the server and ignores browser-supplied totals. The API also verifies the Razorpay signature and checks the provider's order/payment IDs, amount, currency, and captured status before an order is saved.
+- **Build Your Own Box is still a pricing blocker:** the page advertises ₹999 for five packs, but the cart currently adds individual SKUs at their regular prices. The checkout shipping rule also differs from the Build Your Own Box page. Decide and implement the intended bundle eligibility and shipping policy before production.
 - The current public repository history contains a committed `orders.db`. Removing it from the current tree does not remove it from Git history or revoke copies. If it contains real customer data, investigate exposure and clean the history carefully; consider rotating any credentials if any were stored in it.
 - Confirm the deployed API uses the Postgres-backed Vercel routes and does not rely on the legacy SQLite `server.js`.
-- Run `npm ci`, `npm run build`, and the staging checks above. These checks have **not** been run by this patch authoring workflow.
+- Confirm Razorpay automatic capture is enabled for the account, since the server intentionally only accepts captured payments.
+- Run `npm ci`, `npm test`, `npm run build`, and the staging checks above. These checks have **not** been run by this patch authoring workflow.
 
 Do not merge or deploy until the remaining payment-validation blocker is resolved and staging checks pass.
