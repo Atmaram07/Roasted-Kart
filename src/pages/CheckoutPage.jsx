@@ -116,8 +116,7 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: Math.round(total * 100),
-            receipt: `roastedkart_${Date.now()}`,
+            items: items.map((item) => ({ id: item.id, qty: item.qty })),
           }),
         },
         "Unable to create Razorpay order right now. Please try again after confirming the backend can reach Razorpay.",
@@ -272,7 +271,7 @@ export default function CheckoutPage() {
         <div className="mb-10 rounded-3xl border border-[#00000012] bg-white p-8">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ffca3a]">Checkout</p>
           <h1 className="mt-2 text-5xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">Website Order</h1>
-          <p className="mt-2 text-[#555]">Complete your details and use WhatsApp to confirm your order while web payments are being rolled out.</p>
+          <p className="mt-2 text-[#555]">Complete your details, then pay securely with Razorpay or choose WhatsApp for manual order confirmation.</p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[0.68fr_0.32fr]">
@@ -385,7 +384,7 @@ export default function CheckoutPage() {
               <div className="mt-8 rounded-3xl border border-[#ffcc99] bg-[#fff7ed] p-6 text-[#6b3b00] shadow-sm">
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#ff7a00]">Website checkout ready</p>
                 <p className="mt-3 text-base leading-relaxed">
-                  Your details are set. You can now complete checkout with Razorpay for a secure card or UPI payment, or fall back to WhatsApp for manual confirmation.
+                  Your details are ready. Razorpay will calculate the payable amount from the store catalogue, or you can choose WhatsApp for manual order confirmation.
                 </p>
                 {!checkoutConfig.loading && !checkoutConfig.paymentEnabled && (
                   <p className="mt-4 rounded-2xl border border-[#f4b3a7] bg-[#fff0ed] px-4 py-3 text-sm text-[#922d1d]">
