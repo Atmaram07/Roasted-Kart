@@ -48,7 +48,10 @@ test("rejects Build Your Own Box selections with fewer or more than five packs",
     items: [{ id: "peri-peri-soya-pops-80g-pack", qty: 4 }],
   }]), /exactly five/i);
   assert.throws(() => calculateCheckout([], [{
-    items: [{ id: "peri-peri-soya-pops-80g-pack", qty: 6 }],
+    items: [
+      { id: "peri-peri-soya-pops-80g-pack", qty: 3 },
+      { id: "pudina-soya-pops-80g-pack", qty: 3 },
+    ],
   }]), /exactly five/i);
 });
 
