@@ -23,11 +23,13 @@ export default function CheckoutPage() {
     configError: "",
   });
 
-  const shipping = subtotal > 500 ? 0 : 49;
+  const shipping = items.some((item) => item.isBundle) || subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
 
   const orderLines = items
-    .map((item) => `${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
+    .map((item) => item.isBundle
+      ? `Build Your Own Box (₹999, free shipping): ${item.bundleItems.map((pack) => pack.name).join(", ")}`
+      : `${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
     .join("\n");
 
   const orderMessage = encodeURIComponent(
@@ -116,7 +118,11 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            items: items.map((item) => ({ id: item.id, qty: item.qty })),
+            items: items.filter((item) => !item.isBundle).map((item) => ({ id: item.id, qty: item.qty })),
+            bundles: items.filter((item) => item.isBundle).map((item) => ({
+              qty: item.qty,
+              items: item.bundleItems.map((pack) => ({ id: pack.id, qty: pack.qty })),
+            })),
           }),
         },
         "Unable to create Razorpay order right now. Please try again after confirming the backend can reach Razorpay.",
@@ -422,12 +428,13 @@ export default function CheckoutPage() {
 
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={item.id} className="rounded-3xl bg-[#fff7f0] p-4">
+                  <div key={item.cartKey || item.id} className="rounded-3xl bg-[#fff7f0] p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-sm uppercase tracking-[0.12em] text-[#777]">{item.productCategory}</p>
                         <p className="mt-2 text-lg font-black uppercase text-[#1f1f1f]">{item.name}</p>
-                        <p className="mt-1 text-sm text-[#555]">{item.qty} × {item.weight}</p>
+                        <p className="mt-1 text-sm text-[#555]">{item.isBundle ? "1 custom box · 5 packs" : `${item.qty} × ${item.weight}`}</p>
+                        {item.isBundle && <p className="mt-2 text-xs leading-5 text-[#555]">Selected: {item.bundleItems.map((pack) => `${pack.name} (${pack.weight})`).join(", ")}</p>}
                       </div>
                       <p className="text-right text-lg font-black text-[#ff6b00]">Rs {item.price * item.qty}</p>
                     </div>
