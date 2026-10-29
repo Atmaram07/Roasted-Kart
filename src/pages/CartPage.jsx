@@ -6,13 +6,15 @@ import { usePaymentStatus } from "../context/PaymentStatusContext";
 export default function CartPage() {
   const { items, count, subtotal, updateQty, removeFromCart, clearCart } = useCart();
   const { status } = usePaymentStatus();
-  const shipping = subtotal > 500 ? 0 : 49;
+  const shipping = items.some((item) => item.isBundle) || subtotal > 500 ? 0 : 49;
   const total = subtotal + shipping;
 
   const orderMessage = encodeURIComponent(
     `Hi RoastedKart, I'd like to place an order:\n` +
       items
-        .map((item) => `- ${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
+        .map((item) => item.isBundle
+        ? `- Build Your Own Box (₹999, free shipping): ${item.bundleItems.map((pack) => pack.name).join(", ")}`
+        : `- ${item.qty} x ${item.name} (${item.weight}) - Rs ${item.price * item.qty}`)
         .join("\n") +
       `\n\nSubtotal: Rs ${subtotal}` +
       `\nShipping: Rs ${shipping === 0 ? "Free" : shipping}` +
@@ -41,19 +43,20 @@ export default function CartPage() {
             <div className="space-y-4">
               {items.map((item) => (
                 <motion.article
-                  key={item.id}
+                  key={item.cartKey || item.id}
                   whileHover={{ y: -3 }}
                   className="rounded-2xl border border-[#00000012] bg-white p-5"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      {item.productImage && (
+                      {!item.isBundle && item.productImage && (
                         <img src={item.productImage} alt={item.name} className="h-20 w-20 rounded-3xl object-contain" />
                       )}
                       <div>
                         <p className="text-xs font-black uppercase tracking-[0.12em] text-[#ffca3a]">{item.productCategory}</p>
                         <h3 className="text-2xl font-black uppercase [font-family:'Space_Grotesk',sans-serif]">{item.name}</h3>
                         <p className="text-sm text-[#555]">{item.weight}</p>
+                        {item.isBundle && <p className="mt-1 text-xs text-[#555]">Includes: {item.bundleItems.map((pack) => `${pack.name} (${pack.weight})`).join(", ")}</p>}
                       </div>
                     </div>
                     <div className="text-right">
@@ -63,16 +66,16 @@ export default function CartPage() {
                   </div>
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => updateQty(item.id, item.qty - 1)} className="h-8 w-8 rounded-full bg-[#fff8ef] text-[#1f1f1f]">-</button>
+                      {item.isBundle ? <span className="text-xs font-bold text-[#555]">1 custom box · 5 packs</span> : <><button onClick={() => updateQty(item.cartKey || item.id, item.qty - 1)} className="h-8 w-8 rounded-full bg-[#fff8ef] text-[#1f1f1f]">-</button>
                       <span className="w-8 text-center font-black">{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, item.qty + 1)} className="h-8 w-8 rounded-full bg-[#fff8ef] text-[#1f1f1f]">+</button>
+                      <button onClick={() => updateQty(item.cartKey || item.id, item.qty + 1)} className="h-8 w-8 rounded-full bg-[#fff8ef] text-[#1f1f1f]">+</button></>}
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-[#555]">Item total</p>
                       <p className="text-lg font-black text-[#1f1f1f]">Rs {item.price * item.qty}</p>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.cartKey || item.id)}
                       className="rounded-full border border-[#ff3d81] px-4 py-2 text-xs font-black uppercase tracking-wide text-[#ff8eb8]"
                     >
                       Remove
