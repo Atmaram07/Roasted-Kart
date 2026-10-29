@@ -22,4 +22,4 @@ This branch adds server-side bearer-token authorization to order listing, deleti
 - A GitHub Actions workflow was added to run `npm ci`, `npm test`, and `npm run build` on pushes and pull requests. Check the PR's Checks tab; no workflow run was visible at the time this note was updated. If Actions are disabled for the repository, run these commands locally.
 - Complete the staging checks above before merge.
 
-Do not merge or deploy until the remaining payment-validation blocker is resolved and staging checks pass.
+Do not merge or deploy until CI passes and the required staging payment/admin checks pass.
