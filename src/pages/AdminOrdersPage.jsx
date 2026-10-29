@@ -68,6 +68,8 @@ function buildUpdateMessage(order, customNote) {
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [adminToken, setAdminToken] = useState("");
+  const [tokenInput, setTokenInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -75,11 +77,12 @@ export default function AdminOrdersPage() {
   const [messageDrafts, setMessageDrafts] = useState({});
   const [actionFeedback, setActionFeedback] = useState({});
 
-  const loadOrders = async () => {
+  const loadOrders = async (token = adminToken) => {
+    if (!token) return;
     setLoading(true);
 
     try {
-      const data = await apiRequest("/api/orders", {}, "Unable to load orders.");
+      const data = await apiRequest("/api/orders", { headers: { Authorization: `Bearer ${token}` } }, "Unable to load orders.");
       setOrders(data.orders || []);
       setError("");
     } catch (caughtError) {
@@ -97,7 +100,7 @@ export default function AdminOrdersPage() {
     }
 
     try {
-      await apiRequest("/api/orders", { method: "DELETE" }, "Unable to clear orders.");
+      await apiRequest("/api/orders", { method: "DELETE", headers: { Authorization: `Bearer ${adminToken}` } }, "Unable to clear orders.");
       setOrders([]);
       setActionFeedback({});
       setError("");
@@ -112,7 +115,7 @@ export default function AdminOrdersPage() {
         `/api/orders/${id}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
           body: JSON.stringify({ status }),
         },
         "Unable to update order status.",
@@ -172,8 +175,23 @@ export default function AdminOrdersPage() {
   };
 
   useEffect(() => {
-    loadOrders();
-  }, []);
+    if (adminToken) loadOrders(adminToken);
+  }, [adminToken]);
+
+  const handleAdminLogin = async (event) => {
+    event.preventDefault();
+    const token = tokenInput.trim();
+    if (!token) return;
+    setAdminToken(token);
+    setTokenInput("");
+    await loadOrders(token);
+  };
+
+  const handleAdminLogout = () => {
+    setAdminToken("");
+    setOrders([]);
+    setError("");
+  };
 
   const summary = useMemo(() => {
     return orders.reduce(
@@ -226,7 +244,7 @@ export default function AdminOrdersPage() {
           <p className="mt-2 max-w-3xl text-[#555]">
             Manage paid orders, update fulfillment status, and share customer updates from one dashboard.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          {adminToken && <div className="mt-6 flex flex-wrap gap-3">
             <button
               onClick={loadOrders}
               className="rounded-full border border-[#00000015] bg-white px-5 py-3 text-sm font-black uppercase tracking-wide text-[#1f1f1f] transition hover:border-[#ff6b00]"
@@ -239,10 +257,22 @@ export default function AdminOrdersPage() {
             >
               Clear all
             </button>
-          </div>
+          </div>}
         </div>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-4">
+        {!adminToken && (
+          <form onSubmit={handleAdminLogin} className="mb-8 rounded-3xl border border-[#00000012] bg-white p-8">
+            <h2 className="text-xl font-black text-[#1f1f1f]">Admin sign-in</h2>
+            <p className="mt-2 text-sm text-[#555]">Enter the server-configured admin API token. This token is held only in this page session.</p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <input type="password" autoComplete="current-password" value={tokenInput} onChange={(event) => setTokenInput(event.target.value)} required placeholder="Admin API token" className="min-w-0 flex-1 rounded-2xl border border-[#00000015] bg-[#fffaf2] px-4 py-3 text-sm outline-none focus:border-[#ff7a00]" />
+              <button type="submit" className="rounded-full bg-[#1f1f1f] px-6 py-3 text-sm font-black uppercase tracking-wide text-white hover:bg-[#ff6b00]">Sign in</button>
+            </div>
+          </form>
+        )}
+        {adminToken && <div className="mb-5 flex justify-end"><button onClick={handleAdminLogout} className="rounded-full border border-[#00000015] bg-white px-5 py-3 text-sm font-black uppercase tracking-wide text-[#1f1f1f] hover:border-[#ff6b00]">Sign out</button></div>}
+
+        {adminToken && <div className="mb-8 grid gap-4 md:grid-cols-4">
           <div className="rounded-3xl border border-[#00000012] bg-white p-6">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#999]">Total orders</p>
             <p className="mt-3 text-4xl font-black text-[#1f1f1f]">{summary.total}</p>
@@ -259,9 +289,9 @@ export default function AdminOrdersPage() {
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#3c7a53]">Shipped</p>
             <p className="mt-3 text-4xl font-black text-[#22613a]">{summary.Shipped}</p>
           </div>
-        </div>
+        </div>}
 
-        <div className="rounded-[2rem] border border-[#00000012] bg-white p-8">
+        {adminToken && <div className="rounded-[2rem] border border-[#00000012] bg-white p-8">
           <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
             <label className="block text-sm text-[#444]">
               <span className="text-xs font-black uppercase tracking-[0.18em] text-[#999]">Search orders</span>
@@ -446,7 +476,7 @@ export default function AdminOrdersPage() {
               Back to checkout
             </Link>
           </div>
-        </div>
+        </div>}
       </div>
     </section>
   );
