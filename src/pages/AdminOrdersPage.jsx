@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiRequest } from "../lib/api";
 
@@ -86,6 +86,9 @@ export default function AdminOrdersPage() {
       setOrders(data.orders || []);
       setError("");
     } catch (caughtError) {
+      if (/authorization|required|unauthorized/i.test(caughtError.message || "")) {
+        setAdminToken("");
+      }
       setError(caughtError.message || "Unable to load orders.");
     } finally {
       setLoading(false);
@@ -174,10 +177,6 @@ export default function AdminOrdersPage() {
     }
   };
 
-  useEffect(() => {
-    if (adminToken) loadOrders(adminToken);
-  }, [adminToken]);
-
   const handleAdminLogin = async (event) => {
     event.preventDefault();
     const token = tokenInput.trim();
@@ -264,6 +263,7 @@ export default function AdminOrdersPage() {
           <form onSubmit={handleAdminLogin} className="mb-8 rounded-3xl border border-[#00000012] bg-white p-8">
             <h2 className="text-xl font-black text-[#1f1f1f]">Admin sign-in</h2>
             <p className="mt-2 text-sm text-[#555]">Enter the server-configured admin API token. This token is held only in this page session.</p>
+            {error && <p className="mt-4 rounded-2xl border border-[#f4b3a7] bg-[#fff0ed] px-4 py-3 text-sm text-[#922d1d]">{error}</p>}
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <input type="password" autoComplete="current-password" value={tokenInput} onChange={(event) => setTokenInput(event.target.value)} required placeholder="Admin API token" className="min-w-0 flex-1 rounded-2xl border border-[#00000015] bg-[#fffaf2] px-4 py-3 text-sm outline-none focus:border-[#ff7a00]" />
               <button type="submit" className="rounded-full bg-[#1f1f1f] px-6 py-3 text-sm font-black uppercase tracking-wide text-white hover:bg-[#ff6b00]">Sign in</button>
