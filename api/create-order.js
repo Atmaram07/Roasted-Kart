@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   let checkout;
   try {
-    checkout = calculateCheckout(req.body?.items);
+    checkout = calculateCheckout(req.body?.items, req.body?.bundles);
   } catch (error) {
     return res.status(Number(error?.statusCode) || 400).json({ message: error.message });
   }
