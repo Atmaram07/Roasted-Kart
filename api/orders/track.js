@@ -15,10 +15,9 @@ function toCamelCase(row) {
   return {
     id: row.id,
     orderId: row.order_id,
-    paymentId: row.payment_id,
     amount: row.amount,
     currency: row.currency,
-    customer: row.customer,
+    customer: { name: String(row.customer?.name || "").slice(0, 120) },
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     status: row.status,
