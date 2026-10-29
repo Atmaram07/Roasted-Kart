@@ -10,7 +10,8 @@
     "dev": "vercel dev",
     "build": "vite build",
     "preview": "vite preview",
-    "migrate:postgres": "node scripts/migrate-to-postgres.js"
+    "migrate:postgres": "node scripts/migrate-to-postgres.js",
+    "test": "node --test"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
