@@ -18,7 +18,6 @@ function toCamelCase(row) {
     paymentId: row.payment_id,
     amount: row.amount,
     currency: row.currency,
-    signature: row.signature,
     customer: row.customer,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -66,6 +65,7 @@ export default async function handler(req, res) {
       order: toCamelCase(row),
     });
   } catch (error) {
-    return res.status(500).json({ message: error?.message || "Database error." });
+    console.error("Order tracking API error:", error);
+    return res.status(500).json({ message: "Unable to track this order right now." });
   }
 }
