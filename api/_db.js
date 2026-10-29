@@ -4,6 +4,34 @@ import { Pool } from "pg";
 // requests for a short time), so we don't open a new pool on every request.
 let pool;
 
+function getPostgresConnectionConfig(connectionString) {
+  // node-postgres replaces the explicit "ssl" object when SSL parameters such as
+  // sslmode or sslrootcert are present in the connection string. Strip those
+  // parameters so the supplied Supabase CA certificate is always used.
+  const url = new URL(connectionString);
+  for (const key of ["sslmode", "sslrootcert", "sslcert", "sslkey"]) {
+    url.searchParams.delete(key);
+  }
+
+  const ca = process.env.POSTGRES_CA_CERT;
+  if (!ca?.trim()) {
+    throw new Error(
+      "Missing POSTGRES_CA_CERT. Add the Supabase database root certificate as a Vercel environment variable.",
+    );
+  }
+
+  return {
+    connectionString: url.toString(),
+    // Verify the database certificate chain and hostname. Never disable TLS
+    // certificate verification for the production database connection.
+    ssl: {
+      ca: ca.trim(),
+      rejectUnauthorized: true,
+    },
+    max: 5,
+  };
+}
+
 export function getPool() {
   if (!pool) {
     // POSTGRES_URL is created automatically by the Vercel + Supabase integration.
@@ -16,11 +44,7 @@ export function getPool() {
       );
     }
 
-    pool = new Pool({
-      connectionString,
-      ssl: { rejectUnauthorized: false },
-      max: 5,
-    });
+    pool = new Pool(getPostgresConnectionConfig(connectionString));
   }
 
   return pool;
