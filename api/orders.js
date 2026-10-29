@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { applyCors } from "./_cors.js";
 import { requireAdmin } from "./_admin-auth.js";
 import { getPool, ensureSchema } from "./_db.js";
-import { razorpayKeySecret } from "./_razorpay.js";
+import { fetchRazorpayOrder, fetchRazorpayPayment, razorpayKeySecret } from "./_razorpay.js";
 
 function toCamelCase(row) {
   return {
@@ -48,6 +48,29 @@ export default async function handler(req, res) {
       }
       if (!isValidPaymentSignature(String(orderId), String(paymentId), String(signature))) {
         return res.status(400).json({ message: "Payment signature could not be verified." });
+      }
+
+      let providerOrder;
+      let providerPayment;
+      try {
+        [providerOrder, providerPayment] = await Promise.all([
+          fetchRazorpayOrder(String(orderId)),
+          fetchRazorpayPayment(String(paymentId)),
+        ]);
+      } catch (error) {
+        console.error("Razorpay order record verification failed:", error);
+        return res.status(502).json({ message: "Unable to confirm payment with Razorpay. Please try again shortly." });
+      }
+
+      if (providerOrder.id !== String(orderId) ||
+          providerPayment.order_id !== String(orderId) ||
+          providerPayment.id !== String(paymentId) ||
+          providerPayment.status !== "captured" ||
+          providerOrder.currency !== "INR" ||
+          providerPayment.currency !== providerOrder.currency ||
+          Number(providerOrder.amount) !== Number(amount) ||
+          Number(providerPayment.amount) !== Number(amount)) {
+        return res.status(400).json({ message: "Razorpay has not confirmed a captured payment for this exact order amount." });
       }
 
       const duplicate = await pool.query(
