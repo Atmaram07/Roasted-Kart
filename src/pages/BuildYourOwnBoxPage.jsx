@@ -19,8 +19,6 @@ export default function BuildYourOwnBoxPage() {
   const remainingSlots = Math.max(0, 5 - selectedSlots.length);
   const canAddMore = selectedSlots.length < 5;
 
-  const totalPrice = selectedSlots.length === 5 ? 999 : 0;
-
   const updateQuantity = (id, value) => {
     setQuantities((prev) => {
       const totalSelected = Object.values(prev).reduce((sum, qty) => sum + qty, 0);
