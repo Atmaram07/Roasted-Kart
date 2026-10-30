@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getProductBySlug, getVariantBySlug } from "../data/catalog";
 
 const SITE = "https://www.roastedkart.com";
@@ -85,9 +85,8 @@ function setStructuredData(id, data) {
 
 export default function SEO() {
   const location = useLocation();
-  const { variantSlug } = useParams();
   const path = location.pathname.replace(/\/$/, "") || "/";
-  const variant = path.startsWith("/product/") ? getVariantBySlug(variantSlug || path.split("/").pop()) : null;
+  const variant = path.startsWith("/product/") ? getVariantBySlug(path.split("/").pop()) : null;
   const product = variant ? getProductBySlug(variant.productSlug) : null;
   const page = pages[path] || {};
   const title = variant && product ? `${variant.name} ${variant.weight} | RoastedKart` : page.title || DEFAULT_TITLE;
