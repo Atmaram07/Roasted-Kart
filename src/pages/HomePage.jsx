@@ -160,6 +160,36 @@ export default function HomePage() {
            
           </div>
 
+          <div className="rk-hero-reveal relative mx-auto w-full max-w-[560px] lg:justify-self-end">
+            <div className="absolute -inset-5 rounded-[3rem] bg-gradient-to-br from-[#ffb45e]/35 via-[#ff6b00]/10 to-[#9b5de5]/20 blur-2xl" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-[#ffe2c7] bg-white/90 p-5 shadow-[0_28px_80px_rgba(120,66,24,0.16)] sm:p-8">
+              <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[#ffd9b5]/70 blur-2xl" />
+              <div className="relative flex items-center justify-between gap-3">
+                <span className="rounded-full bg-[#1f1f1f] px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#ffd26f]">The RoastedKart edit</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#8a6547]">Big on crunch</span>
+              </div>
+              {comboProduct && (
+                <>
+                  <Link to={`/product/${comboVariant.slug}`} className="relative mt-4 block rounded-[2rem] bg-gradient-to-br from-[#fff3e5] to-[#f8e8ff] p-4 sm:p-6">
+                    <img src={comboProduct.image} alt={comboProduct.name} fetchPriority="high" className="mx-auto h-64 w-full object-contain drop-shadow-[0_22px_20px_rgba(64,36,20,0.16)] sm:h-[340px]" />
+                    <span className="absolute bottom-4 left-4 rounded-full border border-white/80 bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#5c351c]">Explore the combo</span>
+                  </Link>
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#ff7a00]">Featured snack box</p>
+                      <p className="mt-1 text-lg font-black leading-tight text-[#202020] [font-family:'Space_Grotesk',sans-serif]">{comboProduct.name}</p>
+                      <p className="mt-1 text-sm text-[#69615b]">{comboVariant.weight} · ₹{comboVariant.price}</p>
+                    </div>
+                    <Link to={`/product/${comboVariant.slug}`} className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#ff6b00] px-5 py-3 text-xs font-black uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(255,107,0,0.25)] transition hover:-translate-y-0.5 hover:bg-[#e85e00]">Shop the box <span aria-hidden="true" className="ml-2">→</span></Link>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="pointer-events-none absolute -bottom-4 -left-3 hidden rounded-2xl border border-[#f3dfc9] bg-white px-4 py-3 shadow-xl sm:block">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#8a6547]">Snack your way</p>
+              <p className="mt-1 text-sm font-black text-[#252525]">Bold flavours. Roasted crunch.</p>
+            </div>
+          </div>
         </div>
       </section>
 
