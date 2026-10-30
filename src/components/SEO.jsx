@@ -3,26 +3,27 @@ import { useLocation } from "react-router-dom";
 import { getProductBySlug, getVariantBySlug } from "../data/catalog";
 
 const SITE = "https://www.roastedkart.com";
-const DEFAULT_TITLE = "RoastedKart | Roasted Snacks, Millet Mixes & Soya Protein Pops";
-const DEFAULT_DESCRIPTION = "Explore RoastedKart's range of roasted snack boxes, millet mixes and soya protein pops. Discover flavour-packed snacks and shop online.";
+const ORGANIZATION_ID = `${SITE}/#organization`;
+const DEFAULT_TITLE = "RoastedKart | Official Website for Roasted Snacks & Soya Protein Pops";
+const DEFAULT_DESCRIPTION = "RoastedKart is an Indian snack brand offering roasted snack boxes, millet mixes and soya protein pops. Explore our range and shop online at the official RoastedKart website.";
 
 const pages = {
   "/": { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION },
   "/shop": {
     title: "Shop Roasted Snacks, Millet Boxes & Soya Pops | RoastedKart",
-    description: "Shop RoastedKart snack boxes, millet mixes and soya protein pops in multiple flavours and pack sizes. Explore the range and order online.",
+    description: "Shop the official RoastedKart range of snack boxes, millet mixes and soya protein pops in multiple flavours and pack sizes.",
   },
   "/build-your-own": {
     title: "Build Your Own Snack Box | RoastedKart",
-    description: "Create a snack box with RoastedKart favourites. Explore roasted snacks and build a mix that suits your taste.",
+    description: "Create your own snack box with favourites from RoastedKart. Explore roasted snacks and build a mix that suits your taste.",
   },
   "/about": {
-    title: "About RoastedKart | Our Roasted Snack Range",
-    description: "Get to know RoastedKart and our range of flavour-forward roasted snacks, millet mixes and soya protein pops.",
+    title: "About RoastedKart | Indian Roasted Snack Brand",
+    description: "Get to know RoastedKart, an Indian snack brand offering roasted snack boxes, millet mixes and soya protein pops.",
   },
   "/contact": {
     title: "Contact RoastedKart | Customer Support & Orders",
-    description: "Get in touch with RoastedKart for product questions, order support and assistance with your online snack order.",
+    description: "Contact the RoastedKart team for product questions, order support and assistance with your online snack order.",
   },
   "/faq": {
     title: "Frequently Asked Questions | RoastedKart",
@@ -105,7 +106,7 @@ export default function SEO() {
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", description);
     setMeta("property", "og:url", canonical);
-    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:card", "summary");
     setMeta("name", "twitter:title", title);
     setMeta("name", "twitter:description", description);
     setLink("canonical", canonical);
@@ -113,16 +114,27 @@ export default function SEO() {
     setStructuredData("rk-organization-schema", {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": ORGANIZATION_ID,
       name: "RoastedKart",
-      url: SITE,
+      alternateName: "Roasted Kart",
+      url: `${SITE}/`,
+      description: DEFAULT_DESCRIPTION,
       email: "dietfactoryindia@gmail.com",
       telephone: "+91 74250 49203",
+      sameAs: [
+        "https://www.instagram.com/roastedkart/",
+        "https://www.linkedin.com/company/roastedkart",
+      ],
     });
     setStructuredData("rk-website-schema", {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": `${SITE}/#website`,
       name: "RoastedKart",
-      url: SITE,
+      alternateName: "Roasted Kart",
+      url: `${SITE}/`,
+      publisher: { "@id": ORGANIZATION_ID },
+      inLanguage: "en-IN",
     });
 
     if (variant && product) {
@@ -145,7 +157,7 @@ export default function SEO() {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
           { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE}/shop` },
           { "@type": "ListItem", position: 3, name: product.name, item: canonical },
         ],
