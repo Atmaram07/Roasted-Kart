@@ -3,7 +3,7 @@ import { applyCors } from "../_cors.js";
 import { getPool, ensureSchema } from "../_db.js";
 
 function normalizePhone(value) {
-  const digits = String(value || "").replace(/\\D/g, "");
+  const digits = String(value || "").replace(/\D/g, "");
   return digits.length === 10 ? `91${digits}` : digits;
 }
 
