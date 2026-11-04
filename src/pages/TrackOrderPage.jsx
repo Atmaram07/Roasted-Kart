@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { apiRequest } from "../lib/api";
 
@@ -77,6 +77,11 @@ export default function TrackOrderPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!trackingToken) return;
+    handleSubmit({ preventDefault: () => {} });
+  }, [trackingToken]);
 
   return (
     <section className="min-h-screen overflow-hidden bg-[#fff8ef] px-4 py-14 md:px-8">
@@ -177,14 +182,15 @@ export default function TrackOrderPage() {
                 />
               </div>
 
+              </>}
               <button
                 type="submit"
                 disabled={loading}
                 className="inline-flex items-center justify-center rounded-full bg-[#1f1f1f] px-7 py-3.5 text-sm font-black uppercase tracking-[0.16em] text-white transition hover:bg-[#ff6b00] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {loading ? "Checking..." : trackingToken ? "View Order Status" : "Track Order"}
+                {loading ? "Checking..." : trackingToken ? "Refresh Order Status" : "Track Order"}
               </button>
-              </>}
+}
             </form>
 
             {error && (
