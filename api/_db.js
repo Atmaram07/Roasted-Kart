@@ -69,8 +69,10 @@ export async function ensureSchema() {
       customer JSONB NOT NULL,
       created_at TIMESTAMPTZ NOT NULL,
       updated_at TIMESTAMPTZ NOT NULL,
-      status TEXT NOT NULL
+      status TEXT NOT NULL,
+      tracking_token_hash TEXT
     );
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS tracking_token_hash TEXT;
   `);
 
   return schemaReady;
