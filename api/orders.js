@@ -101,12 +101,20 @@ export default async function handler(req, res) {
       };
 
       await pool.query(
-        `INSERT INTO orders (id, order_id, payment_id, amount, currency, signature, customer, created_at, updated_at, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+        `INSERT INTO orders (id, order_id, payment_id, amount, currency, signature, customer, created_at, updated_at, status, tracking_token_hash)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
         [record.id, record.orderId, record.paymentId, record.amount, record.currency,
-          String(signature), JSON.stringify(record.customer), record.createdAt, record.updatedAt, record.status],
+          String(signature), JSON.stringify(record.customer), record.createdAt, record.updatedAt, record.status, trackingTokenHash],
       );
-      if (record.customer.email) {\n        try {\n          const email = orderEmailMarkup({ customerName: record.customer.name, orderId: record.orderId, amount: record.amount, status: record.status, trackingUrl });\n          await sendOrderEmail({ to: record.customer.email, ...email });\n        } catch (emailError) {\n          console.error("Order confirmation email failed:", emailError);\n        }\n      }\n      return res.status(201).json({ success: true, message: "Order record saved.", order: record });
+      if (record.customer.email) {
+        try {
+          const email = orderEmailMarkup({ customerName: record.customer.name, orderId: record.orderId, amount: record.amount, status: record.status, trackingUrl });
+          await sendOrderEmail({ to: record.customer.email, ...email });
+        } catch (emailError) {
+          console.error("Order confirmation email failed:", emailError);
+        }
+      }
+      return res.status(201).json({ success: true, message: "Order record saved.", order: record });
     }
 
     if (req.method === "DELETE") {
