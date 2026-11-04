@@ -84,7 +84,7 @@ export default async function handler(req, res) {
 
       const now = new Date().toISOString();
       const { token: trackingToken, hash: trackingTokenHash } = createTrackingToken();
-      const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\\/$/, "");
+      const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\/$/, "");
       const trackingUrl = `${baseUrl}/track-order?token=${encodeURIComponent(trackingToken)}`;
       const record = {
         id: `order_${crypto.randomUUID()}`,
