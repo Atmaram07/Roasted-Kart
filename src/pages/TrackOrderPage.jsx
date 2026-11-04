@@ -43,7 +43,8 @@ export default function TrackOrderPage() {
   });
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");\n  const trackingToken = query.get("token") || "";
+  const [error, setError] = useState("");
+  const trackingToken = query.get("token") || "";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -61,10 +62,9 @@ export default function TrackOrderPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: form.orderId.trim(),
-            phone: form.phone.trim(),
-          }),
+          body: JSON.stringify(trackingToken
+            ? { token: trackingToken }
+            : { orderId: form.orderId.trim(), phone: form.phone.trim() }),
         },
         "Unable to track this order right now.",
       );
@@ -100,7 +100,7 @@ export default function TrackOrderPage() {
               snack status.
             </h1>
             <p className="mt-4 max-w-lg text-sm leading-7 text-[#d8d8d8]">
-              Enter your order ID and the phone number used at checkout to see the latest fulfilment status for your RoastedKart order.
+              {trackingToken ? "Your secure email tracking link is ready. View the latest fulfilment status for your RoastedKart order." : "Enter your order ID and the phone number used at checkout to see the latest fulfilment status for your RoastedKart order."}
             </p>
 
             <div className="mt-8 grid gap-4">
@@ -145,7 +145,8 @@ export default function TrackOrderPage() {
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">\n              {!trackingToken && <>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              {!trackingToken && <>
               <div>
                 <label htmlFor="orderId" className="text-xs font-black uppercase tracking-[0.16em] text-[#777]">
                   Order ID
