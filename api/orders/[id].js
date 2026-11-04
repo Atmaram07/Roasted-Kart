@@ -51,7 +51,7 @@ export default async function handler(req, res) {
 
     if (status !== existing.status && existing.customer?.email) {
       try {
-        const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\\/$/, "");
+        const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\/$/, "");
         const email = orderEmailMarkup({
           customerName: existing.customer.name, orderId: existing.order_id, amount: existing.amount, status,
           trackingUrl: `${baseUrl}/track-order`,
