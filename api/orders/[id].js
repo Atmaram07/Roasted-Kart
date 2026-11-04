@@ -1,6 +1,6 @@
 import { applyCors } from "../_cors.js";
 import { requireAdmin } from "../_admin-auth.js";
-import { getPool, ensureSchema } from "../_db.js";
+import { getPool, ensureSchema } from "../_db.js";\nimport { orderEmailMarkup, sendOrderEmail } from "../_order-email.js";
 
 const allowedStatuses = ["Pending", "Packed", "Shipped"];
 
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     }
 
     const updatedAt = new Date().toISOString();
-    await pool.query(`UPDATE orders SET status = $1, updated_at = $2 WHERE id = $3`, [status, updatedAt, id]);
+    await pool.query(`UPDATE orders SET status = $1, updated_at = $2 WHERE id = $3`, [status, updatedAt, id]);\n\n    if (status !== existing.status && existing.customer?.email) {\n      try {\n        const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\\/$/, "");\n        const email = orderEmailMarkup({\n          customerName: existing.customer.name, orderId: existing.order_id, amount: existing.amount, status,\n          trackingUrl: `${baseUrl}/track-order`,\n        });\n        await sendOrderEmail({ to: existing.customer.email, ...email });\n      } catch (emailError) {\n        console.error("Order status email failed:", emailError);\n      }\n    }
 
     return res.status(200).json({
       success: true,
