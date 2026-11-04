@@ -184,6 +184,7 @@ export default function TrackOrderPage() {
               >
                 {loading ? "Checking..." : trackingToken ? "View Order Status" : "Track Order"}
               </button>
+              </>}
             </form>
 
             {error && (
