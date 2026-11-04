@@ -3,6 +3,7 @@ import { applyCors } from "./_cors.js";
 import { requireAdmin } from "./_admin-auth.js";
 import { getPool, ensureSchema } from "./_db.js";
 import { fetchRazorpayOrder, fetchRazorpayPayment, razorpayKeySecret } from "./_razorpay.js";
+import { createTrackingToken, orderEmailMarkup, sendOrderEmail } from "./_order-email.js";
 
 function toCamelCase(row) {
   return {
@@ -82,6 +83,9 @@ export default async function handler(req, res) {
       }
 
       const now = new Date().toISOString();
+      const { token: trackingToken, hash: trackingTokenHash } = createTrackingToken();
+      const baseUrl = (process.env.APP_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.roastedkart.com")).replace(/\\/$/, "");
+      const trackingUrl = `${baseUrl}/track-order?token=${encodeURIComponent(trackingToken)}`;
       const record = {
         id: `order_${crypto.randomUUID()}`,
         orderId: String(orderId), paymentId: String(paymentId),
@@ -93,7 +97,7 @@ export default async function handler(req, res) {
           address: String(customer.address).trim().slice(0, 1000),
           notes: String(customer.notes || "").trim().slice(0, 1000),
         },
-        createdAt: now, updatedAt: now, status: "Pending",
+        createdAt: now, updatedAt: now, status: "Pending", trackingUrl,
       };
 
       await pool.query(
@@ -102,7 +106,7 @@ export default async function handler(req, res) {
         [record.id, record.orderId, record.paymentId, record.amount, record.currency,
           String(signature), JSON.stringify(record.customer), record.createdAt, record.updatedAt, record.status],
       );
-      return res.status(201).json({ success: true, message: "Order record saved.", order: record });
+      if (record.customer.email) {\n        try {\n          const email = orderEmailMarkup({ customerName: record.customer.name, orderId: record.orderId, amount: record.amount, status: record.status, trackingUrl });\n          await sendOrderEmail({ to: record.customer.email, ...email });\n        } catch (emailError) {\n          console.error("Order confirmation email failed:", emailError);\n        }\n      }\n      return res.status(201).json({ success: true, message: "Order record saved.", order: record });
     }
 
     if (req.method === "DELETE") {
