@@ -43,7 +43,7 @@ export default function TrackOrderPage() {
   });
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState("");\n  const trackingToken = query.get("token") || "";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -145,7 +145,7 @@ export default function TrackOrderPage() {
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">\n              {!trackingToken && <>
               <div>
                 <label htmlFor="orderId" className="text-xs font-black uppercase tracking-[0.16em] text-[#777]">
                   Order ID
@@ -181,7 +181,7 @@ export default function TrackOrderPage() {
                 disabled={loading}
                 className="inline-flex items-center justify-center rounded-full bg-[#1f1f1f] px-7 py-3.5 text-sm font-black uppercase tracking-[0.16em] text-white transition hover:bg-[#ff6b00] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {loading ? "Checking..." : "Track Order"}
+                {loading ? "Checking..." : trackingToken ? "View Order Status" : "Track Order"}
               </button>
             </form>
 
